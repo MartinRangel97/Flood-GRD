@@ -19,8 +19,12 @@ public class Cell : MonoBehaviour {
     public List<GameObject> flowsTo = new List<GameObject>();
 
 
+
+    public bool isRiverStart;   // Relavent if the cell is a channel
+
+
     private CellType cellType;
-    private bool isActivated = false;   //Is used when calculating elevation of each tile
+    private bool isActivated = false;   //Is used when calculating elevation of each tile and in the Dijkstra's algorithm
 
     private void Start() {
         cellType = CellType.Hillslope;
@@ -63,6 +67,8 @@ public class Cell : MonoBehaviour {
     }
 
     public bool ChangeCellType() {
+        
+        
         if (cellType == CellType.Hillslope) {
             cellType = CellType.Channel;
             ChangeElevation(3);
@@ -73,6 +79,16 @@ public class Cell : MonoBehaviour {
             ChangeElevation(255);
             
             return false;
+        }
+    }
+
+    public void ChangeCellType(CellType type) {
+        cellType = type;
+        if (cellType == CellType.Channel) {
+            ChangeElevation(3);
+            ChangeColour(0, 8, 0);
+        } else {
+            ChangeElevation(255);
         }
     }
 

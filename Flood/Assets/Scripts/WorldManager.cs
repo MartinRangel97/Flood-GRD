@@ -20,11 +20,11 @@ public class WorldManager : MonoBehaviour {
     public List<(int, int)> waterLocations = new List<(int, int)>();
 
     private List<GameObject> alreadyClicked = new List<GameObject>();
-
+    private Vector2 outletLocation;
 
     private void Start() {
-        width = 50;
-        height = 50;
+        width = 51;
+        height = 51;
         cells = new GameObject[width, height];
         InitialiseWorld();
         //DrawRandomLake((15, 3));
@@ -132,7 +132,6 @@ public class WorldManager : MonoBehaviour {
             }
         }
 
-
     }
 
     private Cell GetCellScript(int xIndex, int yIndex) {
@@ -147,6 +146,10 @@ public class WorldManager : MonoBehaviour {
             if (cellClicked == null) {
                 Debug.Log("No Cell Clicked");
                 return;
+            }
+
+            if ((Vector2)cellClicked.transform.position == outletLocation) {
+                Debug.Log("Cannot Change the Fixed River end point");
             }
 
             Vector3 position = cellClicked.transform.position;
@@ -247,6 +250,7 @@ public class WorldManager : MonoBehaviour {
     // Goes through each cell and determines which neighbour cells each cell will send its water to
     // NOTE: Does not work with water tiles... Yet!
     // Also: Gotta love that 4x for loop.
+    // Sidebar: This function is going to be a mess
     private void CalculateWorldFlow() {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
@@ -254,7 +258,7 @@ public class WorldManager : MonoBehaviour {
                 Cell curCell = GetCellScript(x, y);
                 int curElevation = curCell.GetElevation();
 
-                List<GameObject> neighbours = new List<GameObject>();
+                List<(int, int)> channelNeighbours = new List<(int, int)>();    //Only relevant if the tile is a channel
 
                 for (int i = -1; i < 2; i++) {
                     for (int j = -1; j < 2; j++) {
@@ -267,15 +271,120 @@ public class WorldManager : MonoBehaviour {
                             continue;
                         }
 
-                        if (GetCellScript(x + i, y + j).GetElevation() < curElevation) {
-                            curCell.SetFlowList(cells[x + i, y + j]);
+                        // What to do if the current cell is a hillslope
+                        if (curCell.GetCellType() == CellType.Hillslope) {
+                            if (GetCellScript(x + i, y + j).GetElevation() < curElevation) {
+                                curCell.SetFlowList(cells[x + i, y + j]);
+                            }
+
+
+                        // What to do if the current cell is channel
+                        } else {
+                            
+                            // Djskstra's algorithm on the channels
+
+
+
+
+                            /*
+                            if (GetCellScript(x + i, y + j).GetCellType() == CellType.Channel) {
+                                channelNeighbours.Add((x + i, y + j));
+                            }
+                            */
                         }
                     }
                 }
 
+                
+
+
+
+
+
+
+                /*
+                if (channelNeighbours.Count > 0) {
+
+                    if (channelNeighbours.Count == 1) {
+                        curCell.SetFlowList(cells[channelNeighbours[0].Item1, channelNeighbours[0].Item2]);
+                    } else {
+                        int[] ranking = new int[channelNeighbours.Count];
+                        int index = 0;
+                        foreach ((int, int) neighbour in channelNeighbours) {
+
+
+
+                            index++;
+                        }
+                    }
+                    
+                }*/
+
+
             }
         }
+
+
+        foreach ((int, int) channel in waterLocations) {
+
+            List<(int, int)> channelNeighbours = new List<(int, int)>();
+            
+            
+            for (int i = -1; i < 2; i++) {
+                for (int j = -1; j < 2; j++) {
+
+
+                    if (channel.Item1 + i >= width || channel.Item1 + i < 0 || channel.Item2 + j >= height || channel.Item2 + j < 0) {
+                        continue;
+                    }
+
+                    if (i == 0 && j == 0) {
+                        continue;
+                    }
+
+                    if (GetCellScript(channel.Item1 + i, channel.Item2 + j).GetCellType() == CellType.Channel) {
+                        channelNeighbours.Add((channel.Item1 + i, channel.Item2 + j));
+                    }
+
+                }
+            }
+
+            if (channelNeighbours.Count <= 1) {
+                GetCellScript(channel.Item1, channel.Item2).isRiverStart = true;
+            }
+
+
+        }
+
+
+
+
+
+
+
+
+
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private GameObject GetTileFromClick() {
         RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
