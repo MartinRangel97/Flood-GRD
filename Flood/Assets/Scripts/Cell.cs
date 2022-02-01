@@ -8,6 +8,10 @@ public enum CellType { Channel , Hillslope}
 public class Cell : MonoBehaviour {
 
     public int elevation;
+
+    public int flowElevation;
+
+
     public float waterLevel = 0;    // level of water on this tile
     public float waterGainedThisCycle = 0; // The amount of water this tile has gained before the end of a cycle
 
@@ -17,10 +21,12 @@ public class Cell : MonoBehaviour {
     private static int elevationSharedColourMultiplier = 1; //colourMultiplier * 2 - 4;
 
     public List<GameObject> flowsTo = new List<GameObject>();
+    public List<Vector2> directionFlowsFrom = new List<Vector2>();
 
 
 
-    public bool isRiverStart;   // Relavent if the cell is a channel
+    public bool isRiverStart;   // Relavent if the cell is a channel -- OBSOLETE
+    public bool isRiverEnd;
 
 
     private CellType cellType;
@@ -71,7 +77,7 @@ public class Cell : MonoBehaviour {
         
         if (cellType == CellType.Hillslope) {
             cellType = CellType.Channel;
-            ChangeElevation(3);
+            ChangeElevation(WorldManager.channelElevationValue);
             ChangeColour(0, 8, 0);
             return true;
         } else {
@@ -85,7 +91,7 @@ public class Cell : MonoBehaviour {
     public void ChangeCellType(CellType type) {
         cellType = type;
         if (cellType == CellType.Channel) {
-            ChangeElevation(3);
+            ChangeElevation(WorldManager.channelElevationValue);
             ChangeColour(0, 8, 0);
         } else {
             ChangeElevation(255);
