@@ -343,6 +343,7 @@
 "Assets/Scripts/CameraController.cs"
 "Assets/Scripts/Cell.cs"
 "Assets/Scripts/UI/HillslopeChannel.cs"
+"Assets/Scripts/UI/SelectCells.cs"
 "Assets/Scripts/UI/ShowHide.cs"
 "Assets/Scripts/WorldManager.cs"
 -langversion:8.0

@@ -12,6 +12,7 @@ public class WorldManager : MonoBehaviour {
 
     [SerializeField] private GameObject cellGO;
 
+    public GameObject CellManager;
 
     private int width, height;
     private int cellWidth = 1;
@@ -126,7 +127,7 @@ public class WorldManager : MonoBehaviour {
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                GameObject go = Instantiate(cellGO, new Vector2(x * cellWidth, y * cellWidth), Quaternion.identity);
+                GameObject go = Instantiate(cellGO, new Vector2(x * cellWidth, y * cellWidth), Quaternion.identity, CellManager.transform);
                 cells[x, y] = go;
                 go.name = "Cell_" + x + "_" + y;
             }

@@ -21,13 +21,24 @@ public class Cell : MonoBehaviour {
 
     private CellType cellType;
     private bool isActivated = false;   //Is used when calculating elevation of each tile
+    public bool isSelected = false;
 
     private void Start() {
         cellType = CellType.Hillslope;
         ChangeElevation(maxColourElevation);
     }
 
-   
+    private void Update()
+    {
+        if (isSelected)
+        {
+            gameObject.transform.GetChild(0).gameObject.SetActive(true);
+        }
+        else
+        {
+            gameObject.transform.GetChild(0).gameObject.SetActive(false);
+        }
+    }
 
     // Changes the elevation of this Cell: -1 = -1 elevation, 0 = +1 elevation
     public void ChangeElevation(int newElevation) {
@@ -126,5 +137,9 @@ public class Cell : MonoBehaviour {
     }
 
 
+    private void OnMouseDown()
+    {
+        gameObject.transform.GetChild(0).gameObject.SetActive(true);
+    }
 
 }
