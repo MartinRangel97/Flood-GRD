@@ -2,9 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//TODO: ADD FLOW TO THE RIVER. BEST WAY IS TO ALLOW THE USER TO PLACE A START AND END POINT FOR A RIVER 
-//AND CALCULATE THE FLOW BY PATHING A ROUTE FROM THE START TO FINISH. ALLOW MULTIPLE STARTS AND ENDS FOR
-//RIVERS THAT FLOW INTO EACH OTHER
+
 
 
 
@@ -18,13 +16,18 @@ public class WorldManager : MonoBehaviour {
     private GameObject[,] cells;
     private bool hasRained = false;
     public List<(int, int)> waterLocations = new List<(int, int)>();
+    public List<Vector2> riverStartLocations = new List<Vector2>();
 
     private List<GameObject> alreadyClicked = new List<GameObject>();
+    private Vector2 outletLocation;
+    public static int channelElevationValue = 3;
+
+
 
 
     private void Start() {
-        width = 50;
-        height = 50;
+        width = 51;
+        height = 51;
         cells = new GameObject[width, height];
         InitialiseWorld();
         //DrawRandomLake((15, 3));
@@ -132,7 +135,6 @@ public class WorldManager : MonoBehaviour {
             }
         }
 
-
     }
 
     private Cell GetCellScript(int xIndex, int yIndex) {
@@ -149,6 +151,11 @@ public class WorldManager : MonoBehaviour {
                 return;
             }
 
+            if ((Vector2)cellClicked.transform.position == outletLocation) {
+                Debug.Log("Cannot Change the Fixed River end point");
+                return;
+            }
+
             Vector3 position = cellClicked.transform.position;
             if (alreadyClicked.Contains(cellClicked)) {
                 return;
@@ -156,6 +163,10 @@ public class WorldManager : MonoBehaviour {
 
             if (GetCellScript((int)position.x, (int)position.y).ChangeCellType()) {
                 waterLocations.Add(((int)position.x, (int)position.y));
+                if (waterLocations.Count == 1) {
+                    outletLocation = new Vector2(position.x, position.y);
+                    GetCellScript((int)outletLocation.x, (int)outletLocation.y).isRiverEnd = true;
+                }
             } else {
                 waterLocations.Remove(((int)position.x, (int)position.y));
             }
@@ -245,8 +256,9 @@ public class WorldManager : MonoBehaviour {
     }
 
     // Goes through each cell and determines which neighbour cells each cell will send its water to
-    // NOTE: Does not work with water tiles... Yet!
-    // Also: Gotta love that 4x for loop.
+    // NOTE: Does not work with water tiles... Or maybe it does? :D
+    // Also: Gotta love that 4x for loop - we can sort this with the GetNeighbours func
+    // Sidebar: This function is going to be a mess -- Less messy than it was a little while ago
     private void CalculateWorldFlow() {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
@@ -254,7 +266,7 @@ public class WorldManager : MonoBehaviour {
                 Cell curCell = GetCellScript(x, y);
                 int curElevation = curCell.GetElevation();
 
-                List<GameObject> neighbours = new List<GameObject>();
+                List<(int, int)> channelNeighbours = new List<(int, int)>();    //Only relevant if the tile is a channel
 
                 for (int i = -1; i < 2; i++) {
                     for (int j = -1; j < 2; j++) {
@@ -267,15 +279,117 @@ public class WorldManager : MonoBehaviour {
                             continue;
                         }
 
-                        if (GetCellScript(x + i, y + j).GetElevation() < curElevation) {
-                            curCell.SetFlowList(cells[x + i, y + j]);
-                        }
+                        // What to do if the current cell is a hillslope
+                        if (curCell.GetCellType() == CellType.Hillslope) {
+                            if (GetCellScript(x + i, y + j).GetElevation() < curElevation) {
+                                curCell.SetFlowList(cells[x + i, y + j]);
+                            }
+
+                        } 
                     }
                 }
 
             }
         }
+
+        foreach ((int, int) w in waterLocations) {
+            GetCellScript(w.Item1, w.Item2).ChangeElevation(width * height + 1);
+        }
+
+
+        CalculateRiverCellElevationForFlow(outletLocation, 1);
+
+        foreach ((int, int) w in waterLocations) {
+            GetCellScript(w.Item1, w.Item2).ChangeElevation(channelElevationValue);
+        }
+
     }
+
+    // Recursive function for calculating the elevation of rivers when determining the direction of flow.
+
+    public void CalculateRiverCellElevationForFlow(Vector2 cell, int elevation) {
+
+        
+        List<Vector2> temp = GetNeighbours(cell);
+        List<Vector2> neighbours = new List<Vector2>();
+        List<Vector2> unsetNeighbours = new List<Vector2>();
+        foreach (Vector2 n in temp) {
+            if (GetCellScript((int)n.x, (int)n.y).GetCellType() == CellType.Channel) {
+                neighbours.Add(n);
+            }
+        }
+
+
+        GetCellScript((int)cell.x, (int)cell.y).ChangeElevation(elevation);
+        foreach (Vector2 n in neighbours) {
+            Cell cellScript = GetCellScript((int)n.x, (int)n.y);
+
+            if (cellScript.GetElevation() == (width * height) + 1) {
+                cellScript.ChangeElevation(elevation + 1);
+                unsetNeighbours.Add(n);
+                cellScript.SetFlowList(cells[(int)cell.x, (int)cell.y]);
+            }
+        }
+
+        foreach (Vector2 n in unsetNeighbours) {
+            CalculateRiverCellElevationForFlow(n, elevation + 1);
+        }
+
+    }
+    
+
+    // Able to sort a list of Vector2s, in decending order, based on the Y value
+    // Uses an insertion sort
+    public List<Vector2> SortByY(List<Vector2> list) {
+        List<Vector2> sortedList = new List<Vector2>();
+
+
+        foreach (Vector2 item in list) {
+            
+            bool isInserted = false;
+            int index = 0;
+
+            while (!isInserted) {
+                if (sortedList.Count == index) {
+                    sortedList.Add(item);
+                    isInserted = true;
+                } else {
+                    if (item.y > sortedList[index].y) {
+                        sortedList.Insert(index, item);
+                        isInserted = true;
+                    } else {
+                        index++;
+                    }
+                }
+            }
+
+        }
+        return sortedList;
+    }
+
+    // Gets a list of Vector2s representing the neighbours of the given cell.
+    // Needs to be applied all over the document... at some point.
+    public List<Vector2> GetNeighbours(Vector2 cell) {
+
+        List<Vector2> neighbours = new List<Vector2>();
+        
+        for (int x = -1; x < 2; x++) {
+            for (int y = -1; y < 2; y++) {
+                if (cell.x + x >= width || cell.x + x < 0 || cell.y + y >= height || cell.y + y < 0) {
+                    continue;
+                }
+
+                if (x == 0 && y == 0) {
+                    continue;
+                }
+                neighbours.Add(new Vector2(cell.x + x, cell.y + y));
+            }
+        }
+
+        return neighbours;
+    }
+
+
 
     private GameObject GetTileFromClick() {
         RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
