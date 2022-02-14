@@ -7,13 +7,18 @@ public enum CellType { Channel , Hillslope}
 
 public class Cell : MonoBehaviour {
 
-    public int elevation;
 
+
+    public int elevation;
     public int flowElevation;
 
 
     public float waterLevel = 0;    // level of water on this tile
     public float waterGainedThisCycle = 0; // The amount of water this tile has gained before the end of a cycle
+
+    public float capacity = 0;
+    public float attenuation = 0;
+
 
 
     private static int colourMultiplier = 3;
@@ -21,11 +26,9 @@ public class Cell : MonoBehaviour {
     private static int elevationSharedColourMultiplier = 1; //colourMultiplier * 2 - 4;
 
     public List<GameObject> flowsTo = new List<GameObject>();
-    public List<Vector2> directionFlowsFrom = new List<Vector2>();
 
 
 
-    public bool isRiverStart;   // Relavent if the cell is a channel -- OBSOLETE
     public bool isRiverEnd;
 
 
@@ -33,8 +36,9 @@ public class Cell : MonoBehaviour {
     private bool isActivated = false;   //Is used when calculating elevation of each tile and in the Dijkstra's algorithm
 
     private void Start() {
-        cellType = CellType.Hillslope;
+        cellType = CellType.Channel;    //Botch
         ChangeElevation(maxColourElevation);
+        ChangeCellType();
     }
 
    
@@ -79,11 +83,19 @@ public class Cell : MonoBehaviour {
             cellType = CellType.Channel;
             ChangeElevation(WorldManager.channelElevationValue);
             ChangeColour(0, 8, 0);
+
+            attenuation = ValueDictionarys.valueDictionary["channel"].attenuation;
+            capacity = ValueDictionarys.valueDictionary["channel"].capacity;
+
             return true;
         } else {
             cellType = CellType.Hillslope;
             ChangeElevation(255);
-            
+
+
+            attenuation = ValueDictionarys.valueDictionary["hillslope"].attenuation;
+            capacity = ValueDictionarys.valueDictionary["hillslope"].capacity;
+
             return false;
         }
     }

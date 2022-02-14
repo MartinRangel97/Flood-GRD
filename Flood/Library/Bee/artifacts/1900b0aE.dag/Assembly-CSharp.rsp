@@ -342,6 +342,8 @@
 -r:"Library/Bee/artifacts/1900b0aE.dag/VSSettingsProvider.ref.dll"
 "Assets/Scripts/CameraController.cs"
 "Assets/Scripts/Cell.cs"
+"Assets/Scripts/CellData.cs"
+"Assets/Scripts/ValueDictionarys.cs"
 "Assets/Scripts/WorldManager.cs"
 -langversion:8.0
 
