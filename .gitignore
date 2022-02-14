@@ -3,6 +3,13 @@
 # Get latest from https://github.com/github/gitignore/blob/master/Unity.gitignore
 #
 /[Ll]ibrary/
+Flood/Library
+Flood/Logs
+Flood/Obj
+Flood/obj
+Flood/Build
+Flood/Builds
+Flood/Temp
 /[Tt]emp/
 /[Oo]bj/
 /[Bb]uild/
@@ -58,10 +65,3 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
-
-Flood/Library/
-Flood/Logs/shadercompiler-UnityShaderCompiler.exe6.log
-
-Flood/Logs/shadercompiler-UnityShaderCompiler.exe7.log
-
-Flood/Temp/
