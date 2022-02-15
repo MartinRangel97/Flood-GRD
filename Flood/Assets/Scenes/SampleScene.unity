@@ -1268,7 +1268,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -798.5606, y: 487.5663}
+  m_AnchoredPosition: {x: -798.5607, y: 487.5663}
   m_SizeDelta: {x: -1597.121, y: -975.133}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &482978610
@@ -2900,6 +2900,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cellGO: {fileID: 6754237565321258515, guid: a0c03d09b76a1724bbefaa7cb003a369, type: 3}
+  riverStartLocations: []
   CellManager: {fileID: 656683879}
 --- !u!4 &1012478833
 Transform:

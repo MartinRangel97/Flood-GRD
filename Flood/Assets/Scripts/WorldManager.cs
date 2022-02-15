@@ -23,7 +23,7 @@ public class WorldManager : MonoBehaviour
     private Vector2 outletLocation;
     public static int channelElevationValue = 3;
 
-
+    public GameObject CellManager;
 
 
     private void Start()
@@ -152,7 +152,7 @@ public class WorldManager : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                GameObject go = Instantiate(cellGO, new Vector2(x * cellWidth, y * cellWidth), Quaternion.identity);
+                GameObject go = Instantiate(cellGO, new Vector2(x * cellWidth, y * cellWidth), Quaternion.identity, CellManager.transform );
                 cells[x, y] = go;
                 go.name = "Cell_" + x + "_" + y;
             }
