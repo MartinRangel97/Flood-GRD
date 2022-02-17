@@ -10,7 +10,10 @@ public class WorldManager : MonoBehaviour
 {
 
     [SerializeField] private GameObject cellGO;
+    [SerializeField] private Transform cache;
 
+    [Range(0.05f, 2f)]
+    public float timeBetweenSteps = 1f;
 
     private int width, height;
     private int cellWidth = 1;
@@ -24,10 +27,16 @@ public class WorldManager : MonoBehaviour
     public static int channelElevationValue = 3;
 
 
+    private bool autoSimulate = false;
+    private bool canSimulate = false;
+    private int step = 0;
 
 
-    private void Start()
-    {
+    private void Awake() {
+        ValueDictionarys.SetupDictionarys();
+    }
+
+    private void Start() {
         width = 51;
         height = 51;
         cells = new GameObject[width, height];
@@ -39,7 +48,6 @@ public class WorldManager : MonoBehaviour
     {
 
         DrawWater();
-        //DrawHillPeak();
 
         // Definitely could be made recursive - might look cleaner too
         if (Input.GetMouseButtonDown(1))
@@ -56,7 +64,7 @@ public class WorldManager : MonoBehaviour
             {
                 runs++;
                 path = CalculateHillslopes(path);
-                Debug.Log("Run: " + runs);
+                //Debug.Log("Run: " + runs);
             }
 
             //Resets the 'Activated' variable 
@@ -71,76 +79,116 @@ public class WorldManager : MonoBehaviour
 
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            if (!hasRained)
-            {
-                foreach (GameObject c in cells)
-                {
-                    int x = (int)c.transform.position.x;
-                    int y = (int)c.transform.position.y;
-
-                    GetCellScript(x, y).SetWaterLevel(1);
-                    GetCellScript(x, y).ChangeColour(0, 0, 255 - 10);
-                }
-
-                hasRained = true;
-
-
-
+        if (Input.GetKeyDown(KeyCode.S)) {
+            autoSimulate = true;
+        }
+        if (canSimulate) {
+            if (Input.GetKeyDown(KeyCode.Space) || autoSimulate) {
+                StepThroughSimulation();
+                
             }
-            else
-            {
-                float waterPerTile = 0;
-                List<GameObject> curFlowList;
-                int x;
-                int y;
+        }
+        
+    }
 
-                foreach (GameObject cell in cells)
-                {
-                    x = (int)cell.transform.position.x;
-                    y = (int)cell.transform.position.y;
-                    curFlowList = GetCellScript(x, y).GetFlowList();
+    private void StepThroughSimulation() {
+        StartCoroutine(Co_StepThroughSimulation(timeBetweenSteps));
+        step++;
+        Debug.Log("Step: " + step);
+    }
 
-                    float waterLevel = GetCellScript(x, y).GetWaterLevel();
-                    if (curFlowList.Count > 0)
-                    {
-                        waterPerTile = waterLevel / curFlowList.Count;
-                        foreach (GameObject c in curFlowList)
-                        {
-                            c.GetComponent<Cell>().waterGainedThisCycle += waterPerTile;
-                        }
+    private IEnumerator Co_StepThroughSimulation(float waitTimeSeconds) {
+        if (!hasRained) {
+            foreach (GameObject c in cells) {
+                int x = (int)c.transform.position.x;
+                int y = (int)c.transform.position.y;
 
-                        GetCellScript(x, y).SetWaterLevel(0);
-                    }
-                }
-
-                float waterTotal = 0;
-                foreach (GameObject cell in cells)
-                {
-
-                    Cell cScript = cell.GetComponent<Cell>();
-
-
-                    cScript.ChangeWaterLevel(cScript.waterGainedThisCycle);
-                    cScript.waterGainedThisCycle = 0;
-                    if (cScript.waterLevel < 0.0001)
-                    {
-                        cScript.ChangeElevation(cScript.elevation);
-                    }
-                    else
-                    {
-                        cScript.ChangeColour(0, 0, (byte)(255 - (10 * cScript.GetWaterLevel())));
-                    }
-
-                    if (waterLocations.Contains(((int)cell.transform.position.x, (int)cell.transform.position.y)))
-                    {
-                        waterTotal += cScript.waterLevel;
-                    }
-                }
-
-                Debug.Log("Total Water in Lake: " + waterTotal);
+                GetCellScript(x, y).SetWaterLevel(1);
+                GetCellScript(x, y).ChangeColour(0, 0, 255 - 10);
             }
+
+            hasRained = true;
+
+
+
+        } else {
+            float waterPerTile = 0;
+            List<GameObject> curFlowList;
+            int x;
+            int y;
+
+            // Calculate the water passed downhill
+
+            foreach (GameObject cell in cells) {
+                x = (int)cell.transform.position.x;
+                y = (int)cell.transform.position.y;
+                curFlowList = GetCellScript(x, y).GetFlowList();
+
+                float waterLevel = GetCellScript(x, y).GetWaterLevel();
+                if (curFlowList.Count > 0) {
+
+
+                    //Calculation
+                    waterPerTile = waterLevel * (1 - GetCellScript(x, y).attenuation) / curFlowList.Count;
+
+
+
+                    foreach (GameObject c in curFlowList) {
+                        c.GetComponent<Cell>().waterGainedThisCycle += waterPerTile;
+                        GetCellScript(x, y).ChangeWaterLevel(-waterPerTile);
+                    }
+
+                }
+            }
+
+            ApplyWaterLevelChanges();
+
+            // Calculate Flooding values
+
+            foreach (GameObject cell in cells) {
+                x = (int)cell.transform.position.x;
+                y = (int)cell.transform.position.y;
+                Cell cellScript = GetCellScript(x, y);
+
+                List<Vector2> neighbours = GetNeighbours(new Vector2(x, y));
+
+                if (cellScript.waterLevel > cellScript.capacity) {
+                    waterPerTile = (cellScript.waterLevel - cellScript.capacity) / neighbours.Count;
+                    foreach (Vector2 n in neighbours) {
+                        GetCellScript((int)n.x, (int)n.y).waterGainedThisCycle += waterPerTile;
+                        cellScript.waterLevel -= waterPerTile;
+                    }
+                }
+            }
+
+            ApplyWaterLevelChanges();
+
+
+            GetCellScript((int)outletLocation.x, (int)outletLocation.y).waterLevel = 0f;
+
+            canSimulate = false;
+            yield return new WaitForSeconds(waitTimeSeconds);
+            canSimulate = true;
+
+        }
+    }
+
+    private void ApplyWaterLevelChanges() {
+        foreach (GameObject cell in cells) {
+
+            Cell cScript = cell.GetComponent<Cell>();
+
+
+            cScript.ChangeWaterLevel(cScript.waterGainedThisCycle);
+            cScript.waterGainedThisCycle = 0;
+            if (cScript.waterLevel < 0.001f) {      // THRESHOLD VALUE for Flood Visual
+                cScript.waterLevel = 0;
+                cScript.ChangeElevation(cScript.elevation);
+            } else {
+                cScript.ChangeColour(0, 0, (byte)(255 - (10 * cScript.GetWaterLevel())));
+            }
+
+
         }
     }
 
@@ -155,6 +203,7 @@ public class WorldManager : MonoBehaviour
                 GameObject go = Instantiate(cellGO, new Vector2(x * cellWidth, y * cellWidth), Quaternion.identity);
                 cells[x, y] = go;
                 go.name = "Cell_" + x + "_" + y;
+                go.transform.parent = cache;
             }
         }
 
@@ -170,6 +219,8 @@ public class WorldManager : MonoBehaviour
 
         if (Input.GetMouseButton(0) && !hasRained)
         {
+
+            canSimulate = false;
 
             GameObject cellClicked = GetTileFromClick();
             if (cellClicked == null)
@@ -237,7 +288,7 @@ public class WorldManager : MonoBehaviour
 
             int currentElevation = GetCellScript(cell.Item1, cell.Item2).GetElevation();
 
-
+            // TODO: refactor to use the GetNeighbours function
             List<(int, int)> surrounding = new List<(int, int)>();
             for (int x = -1; x < 2; x++)
             {
@@ -305,12 +356,16 @@ public class WorldManager : MonoBehaviour
     // NOTE: Does not work with water tiles... Or maybe it does? :D
     // Also: Gotta love that 4x for loop - we can sort this with the GetNeighbours func
     // Sidebar: This function is going to be a mess -- Less messy than it was a little while ago
-    private void CalculateWorldFlow()
-    {
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
+
+    //TODO: Gotta refactor this to use the GetNeighbours function!
+    private void CalculateWorldFlow() {
+        foreach (GameObject c in cells) {
+            c.GetComponent<Cell>().flowsTo = new List<GameObject>();
+        }
+        
+        
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
 
                 Cell curCell = GetCellScript(x, y);
                 int curElevation = curCell.GetElevation();
@@ -359,6 +414,8 @@ public class WorldManager : MonoBehaviour
         {
             GetCellScript(w.Item1, w.Item2).ChangeElevation(channelElevationValue);
         }
+
+        canSimulate = true;
 
     }
 
