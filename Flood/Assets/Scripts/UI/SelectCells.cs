@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class SelectCells : MonoBehaviour
 {
+    public GameObject CellInformation;
+
     // Start is called before the first frame update
     void Start()
     {
