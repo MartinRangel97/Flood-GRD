@@ -11,8 +11,6 @@ public class Cell : MonoBehaviour {
 
     public int elevation;
     public int flowElevation;
-
-
     public float waterLevel = 0;    // level of water on this tile
     public float waterGainedThisCycle = 0; // The amount of water this tile has gained before the end of a cycle
 
@@ -31,9 +29,9 @@ public class Cell : MonoBehaviour {
 
     public bool isRiverEnd;
 
-
     private CellType cellType;
-    private bool isActivated = false;   //Is used when calculating elevation of each tile and in the Dijkstra's algorithm
+    private bool isActivated = false;   //Is used when calculating elevation of each tile
+    public bool isSelected = false;
 
     private void Start() {
         cellType = CellType.Channel;    //Botch
@@ -41,7 +39,17 @@ public class Cell : MonoBehaviour {
         ChangeCellType();
     }
 
-   
+    private void Update()
+    {
+        if (isSelected)
+        {
+            gameObject.transform.GetChild(0).gameObject.SetActive(true);
+        }
+        else
+        {
+            gameObject.transform.GetChild(0).gameObject.SetActive(false);
+        }
+    }
 
     // Changes the elevation of this Cell: -1 = -1 elevation, 0 = +1 elevation
     public void ChangeElevation(int newElevation) {
@@ -77,8 +85,6 @@ public class Cell : MonoBehaviour {
     }
 
     public bool ChangeCellType() {
-        
-        
         if (cellType == CellType.Hillslope) {
             cellType = CellType.Channel;
             ChangeElevation(WorldManager.channelElevationValue);
@@ -97,16 +103,6 @@ public class Cell : MonoBehaviour {
             capacity = ValueDictionarys.valueDictionary["hillslope"].capacity;
 
             return false;
-        }
-    }
-
-    public void ChangeCellType(CellType type) {
-        cellType = type;
-        if (cellType == CellType.Channel) {
-            ChangeElevation(WorldManager.channelElevationValue);
-            ChangeColour(0, 8, 0);
-        } else {
-            ChangeElevation(255);
         }
     }
 
@@ -160,5 +156,9 @@ public class Cell : MonoBehaviour {
     }
 
 
+    private void OnMouseDown()
+    {
+        gameObject.transform.GetChild(0).gameObject.SetActive(true);
+    }
 
 }

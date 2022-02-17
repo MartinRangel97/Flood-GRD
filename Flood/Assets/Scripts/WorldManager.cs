@@ -6,7 +6,8 @@ using UnityEngine;
 
 
 
-public class WorldManager : MonoBehaviour {
+public class WorldManager : MonoBehaviour
+{
 
     [SerializeField] private GameObject cellGO;
     [SerializeField] private Transform cache;
@@ -43,12 +44,14 @@ public class WorldManager : MonoBehaviour {
         //DrawRandomLake((15, 3));
     }
 
-    private void Update() {
+    private void Update()
+    {
 
         DrawWater();
 
         // Definitely could be made recursive - might look cleaner too
-        if (Input.GetMouseButtonDown(1)) {
+        if (Input.GetMouseButtonDown(1))
+        {
             int runs = 0;
             //CalculateHillslopes(waterLocations);
 
@@ -57,15 +60,18 @@ public class WorldManager : MonoBehaviour {
 
 
             // Calculates the elevation of each tile based on the path of the river
-            while (path.Count != 0) {
+            while (path.Count != 0)
+            {
                 runs++;
                 path = CalculateHillslopes(path);
                 //Debug.Log("Run: " + runs);
             }
 
             //Resets the 'Activated' variable 
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++)
+            {
+                for (int y = 0; y < height; y++)
+                {
                     GetCellScript(x, y).Activation(false);
                 }
             }
@@ -186,11 +192,14 @@ public class WorldManager : MonoBehaviour {
         }
     }
 
-    private void InitialiseWorld() {
+    private void InitialiseWorld()
+    {
         cells = new GameObject[width, height];
 
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
                 GameObject go = Instantiate(cellGO, new Vector2(x * cellWidth, y * cellWidth), Quaternion.identity);
                 cells[x, y] = go;
                 go.name = "Cell_" + x + "_" + y;
@@ -200,59 +209,73 @@ public class WorldManager : MonoBehaviour {
 
     }
 
-    private Cell GetCellScript(int xIndex, int yIndex) {
+    private Cell GetCellScript(int xIndex, int yIndex)
+    {
         return cells[xIndex, yIndex].GetComponent<Cell>();
     }
 
-    private void DrawWater() {
+    private void DrawWater()
+    {
 
-        if (Input.GetMouseButton(0) && !hasRained) {
+        if (Input.GetMouseButton(0) && !hasRained)
+        {
 
             canSimulate = false;
 
             GameObject cellClicked = GetTileFromClick();
-            if (cellClicked == null) {
+            if (cellClicked == null)
+            {
                 Debug.Log("No Cell Clicked");
                 return;
             }
 
-            if ((Vector2)cellClicked.transform.position == outletLocation) {
+            if ((Vector2)cellClicked.transform.position == outletLocation)
+            {
                 Debug.Log("Cannot Change the Fixed River end point");
                 return;
             }
 
             Vector3 position = cellClicked.transform.position;
-            if (alreadyClicked.Contains(cellClicked)) {
+            if (alreadyClicked.Contains(cellClicked))
+            {
                 return;
             }
 
-            if (GetCellScript((int)position.x, (int)position.y).ChangeCellType()) {
+            if (GetCellScript((int)position.x, (int)position.y).ChangeCellType())
+            {
                 waterLocations.Add(((int)position.x, (int)position.y));
-                if (waterLocations.Count == 1) {
+                if (waterLocations.Count == 1)
+                {
                     outletLocation = new Vector2(position.x, position.y);
                     GetCellScript((int)outletLocation.x, (int)outletLocation.y).isRiverEnd = true;
                 }
-            } else {
+            }
+            else
+            {
                 waterLocations.Remove(((int)position.x, (int)position.y));
             }
 
             alreadyClicked.Add(cellClicked);
         }
 
-        if (Input.GetMouseButtonUp(0)) {
+        if (Input.GetMouseButtonUp(0))
+        {
             alreadyClicked = new List<GameObject>();
         }
-        
+
     }
 
-    private void DrawWater((int, int) location) {
+    private void DrawWater((int, int) location)
+    {
         GetCellScript(location.Item1, location.Item2).ChangeCellType();
         waterLocations.Add(location);
     }
 
-    public List<(int, int)> CalculateHillslopes(List<(int, int)> listOfLocations) {
+    public List<(int, int)> CalculateHillslopes(List<(int, int)> listOfLocations)
+    {
 
-        if (listOfLocations.Count == 0) {
+        if (listOfLocations.Count == 0)
+        {
 
             return new List<(int, int)>();
 
@@ -260,33 +283,40 @@ public class WorldManager : MonoBehaviour {
 
         List<(int, int)> pathEdges = new List<(int, int)>();
 
-        foreach ((int, int) cell in listOfLocations) {
+        foreach ((int, int) cell in listOfLocations)
+        {
 
             int currentElevation = GetCellScript(cell.Item1, cell.Item2).GetElevation();
 
             // TODO: refactor to use the GetNeighbours function
             List<(int, int)> surrounding = new List<(int, int)>();
-            for (int x = -1; x < 2; x++) {
-                for (int y = -1; y < 2; y++) {
+            for (int x = -1; x < 2; x++)
+            {
+                for (int y = -1; y < 2; y++)
+                {
 
 
                     //Checking for IndexOutOfBounds -> Could also use exceptions
-                    if (cell.Item1 + x >= width || cell.Item1 + x < 0 || cell.Item2 + y >= height || cell.Item2 + y < 0) {
+                    if (cell.Item1 + x >= width || cell.Item1 + x < 0 || cell.Item2 + y >= height || cell.Item2 + y < 0)
+                    {
                         continue;
                     }
 
                     //Checking if the cell being checked has already been altered, does not need to be altered again
-                    if (GetCellScript(cell.Item1 + x, cell.Item2 + y).isActive()) {
+                    if (GetCellScript(cell.Item1 + x, cell.Item2 + y).isActive())
+                    {
                         continue;
                     }
 
                     //Checking if the cell being checked is a channel cell -> does not need to be changed.
-                    if (GetCellScript(cell.Item1 + x, cell.Item2 + y).GetCellType() == CellType.Channel) {
+                    if (GetCellScript(cell.Item1 + x, cell.Item2 + y).GetCellType() == CellType.Channel)
+                    {
                         continue;
                     }
 
                     //Center cell is the current cell, does not need to be checked
-                    if (x == 0 && y == 0) {
+                    if (x == 0 && y == 0)
+                    {
                         continue;
                     }
 
@@ -303,10 +333,12 @@ public class WorldManager : MonoBehaviour {
                 }
             }
 
-            foreach ((int, int) nearbyCell in surrounding) {
+            foreach ((int, int) nearbyCell in surrounding)
+            {
                 GetCellScript(nearbyCell.Item1, nearbyCell.Item2).ChangeElevation(currentElevation + 1);
                 //Debug.Log(GetCellScript(nearbyCell.Item1, nearbyCell.Item2).GetElevation());
-                if (!pathEdges.Contains(nearbyCell)) {
+                if (!pathEdges.Contains(nearbyCell))
+                {
                     pathEdges.Add(nearbyCell);
                 }
             }
@@ -340,38 +372,46 @@ public class WorldManager : MonoBehaviour {
 
                 List<(int, int)> channelNeighbours = new List<(int, int)>();    //Only relevant if the tile is a channel
 
-                for (int i = -1; i < 2; i++) {
-                    for (int j = -1; j < 2; j++) {
+                for (int i = -1; i < 2; i++)
+                {
+                    for (int j = -1; j < 2; j++)
+                    {
 
-                        if (x + i >= width || x + i < 0 || y + j >= height || y + j < 0) {
+                        if (x + i >= width || x + i < 0 || y + j >= height || y + j < 0)
+                        {
                             continue;
                         }
 
-                        if (i == 0 && j == 0) {
+                        if (i == 0 && j == 0)
+                        {
                             continue;
                         }
 
                         // What to do if the current cell is a hillslope
-                        if (curCell.GetCellType() == CellType.Hillslope) {
-                            if (GetCellScript(x + i, y + j).GetElevation() < curElevation) {
+                        if (curCell.GetCellType() == CellType.Hillslope)
+                        {
+                            if (GetCellScript(x + i, y + j).GetElevation() < curElevation)
+                            {
                                 curCell.SetFlowList(cells[x + i, y + j]);
                             }
 
-                        } 
+                        }
                     }
                 }
 
             }
         }
 
-        foreach ((int, int) w in waterLocations) {
+        foreach ((int, int) w in waterLocations)
+        {
             GetCellScript(w.Item1, w.Item2).ChangeElevation(width * height + 1);
         }
 
 
         CalculateRiverCellElevationForFlow(outletLocation, 1);
 
-        foreach ((int, int) w in waterLocations) {
+        foreach ((int, int) w in waterLocations)
+        {
             GetCellScript(w.Item1, w.Item2).ChangeElevation(channelElevationValue);
         }
 
@@ -381,57 +421,72 @@ public class WorldManager : MonoBehaviour {
 
     // Recursive function for calculating the elevation of rivers when determining the direction of flow.
 
-    public void CalculateRiverCellElevationForFlow(Vector2 cell, int elevation) {
+    public void CalculateRiverCellElevationForFlow(Vector2 cell, int elevation)
+    {
 
-        
+
         List<Vector2> temp = GetNeighbours(cell);
         List<Vector2> neighbours = new List<Vector2>();
         List<Vector2> unsetNeighbours = new List<Vector2>();
-        foreach (Vector2 n in temp) {
-            if (GetCellScript((int)n.x, (int)n.y).GetCellType() == CellType.Channel) {
+        foreach (Vector2 n in temp)
+        {
+            if (GetCellScript((int)n.x, (int)n.y).GetCellType() == CellType.Channel)
+            {
                 neighbours.Add(n);
             }
         }
 
 
         GetCellScript((int)cell.x, (int)cell.y).ChangeElevation(elevation);
-        foreach (Vector2 n in neighbours) {
+        foreach (Vector2 n in neighbours)
+        {
             Cell cellScript = GetCellScript((int)n.x, (int)n.y);
 
-            if (cellScript.GetElevation() == (width * height) + 1) {
+            if (cellScript.GetElevation() == (width * height) + 1)
+            {
                 cellScript.ChangeElevation(elevation + 1);
                 unsetNeighbours.Add(n);
                 cellScript.SetFlowList(cells[(int)cell.x, (int)cell.y]);
             }
         }
 
-        foreach (Vector2 n in unsetNeighbours) {
+        foreach (Vector2 n in unsetNeighbours)
+        {
             CalculateRiverCellElevationForFlow(n, elevation + 1);
         }
 
     }
-    
+
 
     // Able to sort a list of Vector2s, in decending order, based on the Y value
     // Uses an insertion sort
-    public List<Vector2> SortByY(List<Vector2> list) {
+    public List<Vector2> SortByY(List<Vector2> list)
+    {
         List<Vector2> sortedList = new List<Vector2>();
 
 
-        foreach (Vector2 item in list) {
-            
+        foreach (Vector2 item in list)
+        {
+
             bool isInserted = false;
             int index = 0;
 
-            while (!isInserted) {
-                if (sortedList.Count == index) {
+            while (!isInserted)
+            {
+                if (sortedList.Count == index)
+                {
                     sortedList.Add(item);
                     isInserted = true;
-                } else {
-                    if (item.y > sortedList[index].y) {
+                }
+                else
+                {
+                    if (item.y > sortedList[index].y)
+                    {
                         sortedList.Insert(index, item);
                         isInserted = true;
-                    } else {
+                    }
+                    else
+                    {
                         index++;
                     }
                 }
@@ -443,17 +498,22 @@ public class WorldManager : MonoBehaviour {
 
     // Gets a list of Vector2s representing the neighbours of the given cell.
     // Needs to be applied all over the document... at some point.
-    public List<Vector2> GetNeighbours(Vector2 cell) {
+    public List<Vector2> GetNeighbours(Vector2 cell)
+    {
 
         List<Vector2> neighbours = new List<Vector2>();
-        
-        for (int x = -1; x < 2; x++) {
-            for (int y = -1; y < 2; y++) {
-                if (cell.x + x >= width || cell.x + x < 0 || cell.y + y >= height || cell.y + y < 0) {
+
+        for (int x = -1; x < 2; x++)
+        {
+            for (int y = -1; y < 2; y++)
+            {
+                if (cell.x + x >= width || cell.x + x < 0 || cell.y + y >= height || cell.y + y < 0)
+                {
                     continue;
                 }
 
-                if (x == 0 && y == 0) {
+                if (x == 0 && y == 0)
+                {
                     continue;
                 }
                 neighbours.Add(new Vector2(cell.x + x, cell.y + y));
@@ -465,11 +525,15 @@ public class WorldManager : MonoBehaviour {
 
 
 
-    private GameObject GetTileFromClick() {
+    private GameObject GetTileFromClick()
+    {
         RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-        if (hit.collider != null) {
+        if (hit.collider != null)
+        {
             return hit.collider.gameObject;
-        } else {
+        }
+        else
+        {
             return null;
         }
     }
@@ -480,33 +544,43 @@ public class WorldManager : MonoBehaviour {
 
 
     //Non Functioning Method, Causes Unity to crash -> potential infinite while loop
-    private void DrawRandomLake((int, int) start) {
+    private void DrawRandomLake((int, int) start)
+    {
         (int, int) currentCell = start;
 
 
-        for (int i = 0; i < Random.Range(4, 10); i++) {
+        for (int i = 0; i < Random.Range(4, 10); i++)
+        {
             bool badSquare = true;
-            while (badSquare) {
+            while (badSquare)
+            {
                 badSquare = false;
                 int x = Random.Range(-1, 1);
                 int y = Random.Range(-1, 1);
 
-                if (x == 0 && y == 0) {
+                if (x == 0 && y == 0)
+                {
                     badSquare = true;
-                } else if (currentCell.Item1 + x >= width || currentCell.Item1 + x < 0 || currentCell.Item2 + y >= height || currentCell.Item2 + y < 0) {
+                }
+                else if (currentCell.Item1 + x >= width || currentCell.Item1 + x < 0 || currentCell.Item2 + y >= height || currentCell.Item2 + y < 0)
+                {
                     badSquare = true;
-                } else if (GetCellScript(currentCell.Item1 + x, currentCell.Item2 + y).GetCellType() == CellType.Channel) {
+                }
+                else if (GetCellScript(currentCell.Item1 + x, currentCell.Item2 + y).GetCellType() == CellType.Channel)
+                {
                     badSquare = true;
                 }
 
 
 
 
-                if (!badSquare) {
+                if (!badSquare)
+                {
                     currentCell = (currentCell.Item1 + x, currentCell.Item2 + y);
                     DrawWater(currentCell);
                     Debug.Log("Drawn River");
-                    if (Random.Range(0, 4) == 0) {
+                    if (Random.Range(0, 4) == 0)
+                    {
                         Debug.Log("Split River");
                         DrawRandomLake(currentCell);
                     }
@@ -515,7 +589,7 @@ public class WorldManager : MonoBehaviour {
         }
     }
 
-    
+
 
 
     /*  
@@ -534,7 +608,6 @@ public class WorldManager : MonoBehaviour {
             }
         }
     }
-
     private void UpdateSurroundingCells(int x, int y, int layer) {
         GameObject[] surrounding = new GameObject[8 * layer];
         int width = 2 * (layer + 1) - 1;
@@ -544,18 +617,14 @@ public class WorldManager : MonoBehaviour {
                 if (i == 0 && j == 0) {     //Must not recalculate the center square
                     continue;
                 }
-
                 try {
                     surrounding[count] = cells[x + i, y + j];
                 }catch (System.IndexOutOfRangeException e) {
                     count++;
                     continue;
                 }
-
                 if () {
-
                 }
-
                 count++;    
             }
             
