@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class HillslopeChannel : MonoBehaviour
 {
-    public Dropdown CellType;
+    public GameObject CellType;
 
     // Start is called before the first frame update
     void Start()
@@ -16,16 +16,20 @@ public class HillslopeChannel : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(CellType.value == 0)
+        switch (CellType.GetComponent<Text>().text)
         {
-            transform.Find("Hillslope").gameObject.SetActive(false);
-            transform.Find("Channel").gameObject.SetActive(true);
-        }
-
-        if (CellType.value == 1)
-        {
-            transform.Find("Channel").gameObject.SetActive(false);
-            transform.Find("Hillslope").gameObject.SetActive(true);
+            case "Channel":
+                transform.Find("Hillslope").gameObject.SetActive(false);
+                transform.Find("Channel").gameObject.SetActive(true);
+                break;
+            case "Hillslope":
+                transform.Find("Channel").gameObject.SetActive(false);
+                transform.Find("Hillslope").gameObject.SetActive(true);
+                break;
+            default:
+                transform.Find("Channel").gameObject.SetActive(false);
+                transform.Find("Hillslope").gameObject.SetActive(false);
+                break;
         }
     }
 }
