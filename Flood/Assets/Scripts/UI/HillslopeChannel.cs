@@ -6,6 +6,8 @@ using UnityEngine.UI;
 public class HillslopeChannel : MonoBehaviour
 {
     public GameObject CellType;
+    public Transform FloodDefences;
+    public GameObject ContributingCells;
 
     // Start is called before the first frame update
     void Start()
@@ -19,17 +21,35 @@ public class HillslopeChannel : MonoBehaviour
         switch (CellType.GetComponent<Text>().text)
         {
             case "Channel":
-                transform.Find("Hillslope").gameObject.SetActive(false);
-                transform.Find("Channel").gameObject.SetActive(true);
+                ResetFloodDefences();
+                FloodDefences.Find("Dredging").gameObject.SetActive(true);
+                FloodDefences.Find("Leaky Dam").gameObject.SetActive(true);
+                FloodDefences.Find("Dam").gameObject.SetActive(true);
+                FloodDefences.Find("Flood Wall").gameObject.SetActive(true);
+                ContributingCells.SetActive(true);
                 break;
             case "Hillslope":
-                transform.Find("Channel").gameObject.SetActive(false);
-                transform.Find("Hillslope").gameObject.SetActive(true);
+                ResetFloodDefences();
+                FloodDefences.Find("Trees").gameObject.SetActive(true);
+                ContributingCells.SetActive(false);
+                break;
+            case "Urban":
+                ResetFloodDefences();
+                FloodDefences.Find("Flood proofing urban areas").gameObject.SetActive(true);
+                ContributingCells.SetActive(false);
                 break;
             default:
-                transform.Find("Channel").gameObject.SetActive(false);
-                transform.Find("Hillslope").gameObject.SetActive(false);
+                ContributingCells.SetActive(false);
+                ResetFloodDefences();
                 break;
+        }
+    }
+
+    void ResetFloodDefences()
+    {
+        foreach(Transform child in FloodDefences)
+        {
+            child.gameObject.SetActive(false);
         }
     }
 }

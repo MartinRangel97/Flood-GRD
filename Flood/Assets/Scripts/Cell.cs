@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public enum CellType { Channel , Hillslope}
+public enum CellType { Channel , Hillslope, Urban}
 
 public class Cell : MonoBehaviour {
-
-
 
     public int elevation;
     public int flowElevation;
@@ -25,7 +23,7 @@ public class Cell : MonoBehaviour {
 
     public List<GameObject> flowsTo = new List<GameObject>();
 
-
+    public string FloodDefence = "Normal";
 
     public bool isRiverEnd;
 
@@ -48,6 +46,24 @@ public class Cell : MonoBehaviour {
         else
         {
             gameObject.transform.GetChild(0).gameObject.SetActive(false);
+        }
+
+        ChangeAttenuation();
+    }
+
+    private void ChangeAttenuation()
+    {
+        switch (FloodDefence)
+        {
+            case "Trees":
+                attenuation = 0.2f;
+                break;
+            case "Leaky Dam":
+                attenuation = 0.5f;
+                break;
+            case "Dam":
+                attenuation = 0.8f;
+                break;
         }
     }
 
@@ -250,5 +266,6 @@ public class Cell : MonoBehaviour {
         return CellFlow;
 
     }
+
 
 }
