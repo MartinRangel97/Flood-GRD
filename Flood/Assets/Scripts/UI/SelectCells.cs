@@ -8,6 +8,7 @@ public class SelectCells : MonoBehaviour
     public GameObject CellInformation;
     public GameObject SelectedCell;
     public GameObject DefenceType;
+    public GameObject ContributingCells;
 
     void Update()
     {
@@ -26,6 +27,8 @@ public class SelectCells : MonoBehaviour
                 SelectedCell = hit.collider.gameObject;
 
                 CellInformation.transform.GetChild(1).GetChild(1).GetComponent<Text>().text = SelectedCell.GetComponent<Cell>().GetCellType().ToString();
+
+                ContributingCells.GetComponent<Text>().text = SelectedCell.gameObject.GetComponent<Cell>().ContributingCells().ToString();
 
                 foreach (Transform child in transform)
                 {

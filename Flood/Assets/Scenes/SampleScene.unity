@@ -1687,7 +1687,7 @@ GameObject:
   - component: {fileID: 362043495}
   - component: {fileID: 362043494}
   m_Layer: 5
-  m_Name: Cell Type
+  m_Name: Number of cells
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3866,6 +3866,7 @@ MonoBehaviour:
   CellInformation: {fileID: 2071923855}
   SelectedCell: {fileID: 0}
   DefenceType: {fileID: 1946209996}
+  ContributingCells: {fileID: 362043492}
 --- !u!1 &1152095945
 GameObject:
   m_ObjectHideFlags: 0
@@ -4707,7 +4708,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1530011559}
   - component: {fileID: 1530011560}
-  - component: {fileID: 1530011561}
   m_Layer: 5
   m_Name: Cell
   m_TagString: Untagged
@@ -4794,18 +4794,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &1530011561
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1530011558}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f7772e51441dec449aaf4ec9e857046, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1574001517
 GameObject:
   m_ObjectHideFlags: 0
