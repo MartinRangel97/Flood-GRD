@@ -26,7 +26,6 @@ public class WorldManager : MonoBehaviour
     private Vector2 outletLocation;
     public static int channelElevationValue = 3;
 
-
     private bool autoSimulate = false;
     private bool canSimulate = false;
     private int step = 0;
@@ -200,7 +199,7 @@ public class WorldManager : MonoBehaviour
         {
             for (int y = 0; y < height; y++)
             {
-                GameObject go = Instantiate(cellGO, new Vector2(x * cellWidth, y * cellWidth), Quaternion.identity);
+                GameObject go = Instantiate(cellGO, new Vector2(x * cellWidth, y * cellWidth), Quaternion.identity, cache);
                 cells[x, y] = go;
                 go.name = "Cell_" + x + "_" + y;
                 go.transform.parent = cache;

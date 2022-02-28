@@ -25,8 +25,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1659861478758815695}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.4, y: 0, z: 0}
-  m_LocalScale: {x: 0.2, y: 1, z: 1}
+  m_LocalPosition: {x: -0.601, y: 0.0013, z: 0}
+  m_LocalScale: {x: 0.2, y: 1.0026, z: 1}
   m_Children: []
   m_Father: {fileID: 7873864206636576480}
   m_RootOrder: 0
@@ -142,8 +142,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6011197686695667106}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.4, z: 0}
-  m_LocalScale: {x: 1, y: 0.2, z: 1}
+  m_LocalPosition: {x: 0.0001, y: -0.6, z: 0}
+  m_LocalScale: {x: 1.4030861, y: 0.2, z: 1}
   m_Children: []
   m_Father: {fileID: 7873864206636576480}
   m_RootOrder: 2
@@ -299,9 +299,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   elevation: 0
+  flowElevation: 0
   waterLevel: 0
   waterGainedThisCycle: 0
+  capacity: 0
+  attenuation: 0
   flowsTo: []
+  isRiverEnd: 0
+  isSelected: 0
 --- !u!61 &7023116981329076910
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -353,8 +358,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7132877457940034672}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.4, z: 0}
-  m_LocalScale: {x: 1, y: 0.2, z: 1}
+  m_LocalPosition: {x: 0, y: 0.6, z: 0}
+  m_LocalScale: {x: 1.403318, y: 0.2, z: 1}
   m_Children: []
   m_Father: {fileID: 7873864206636576480}
   m_RootOrder: 3
@@ -436,8 +441,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8564315413798390018}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.4, y: 0, z: 0}
-  m_LocalScale: {x: 0.2, y: 1, z: 1}
+  m_LocalPosition: {x: 0.601, y: 0.0013, z: 0}
+  m_LocalScale: {x: 0.2, y: 1.0026, z: 1}
   m_Children: []
   m_Father: {fileID: 7873864206636576480}
   m_RootOrder: 1

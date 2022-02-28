@@ -5,7 +5,9 @@ using UnityEngine.UI;
 
 public class HillslopeChannel : MonoBehaviour
 {
-    public Dropdown CellType;
+    public GameObject CellType;
+    public Transform FloodDefences;
+    public GameObject ContributingCells;
 
     // Start is called before the first frame update
     void Start()
@@ -16,16 +18,38 @@ public class HillslopeChannel : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(CellType.value == 0)
+        switch (CellType.GetComponent<Text>().text)
         {
-            transform.Find("Hillslope").gameObject.SetActive(false);
-            transform.Find("Channel").gameObject.SetActive(true);
+            case "Channel":
+                ResetFloodDefences();
+                FloodDefences.Find("Dredging").gameObject.SetActive(true);
+                FloodDefences.Find("Leaky Dam").gameObject.SetActive(true);
+                FloodDefences.Find("Dam").gameObject.SetActive(true);
+                FloodDefences.Find("Flood Wall").gameObject.SetActive(true);
+                ContributingCells.SetActive(true);
+                break;
+            case "Hillslope":
+                ResetFloodDefences();
+                FloodDefences.Find("Trees").gameObject.SetActive(true);
+                ContributingCells.SetActive(false);
+                break;
+            case "Urban":
+                ResetFloodDefences();
+                FloodDefences.Find("Flood proofing urban areas").gameObject.SetActive(true);
+                ContributingCells.SetActive(false);
+                break;
+            default:
+                ContributingCells.SetActive(false);
+                ResetFloodDefences();
+                break;
         }
+    }
 
-        if (CellType.value == 1)
+    void ResetFloodDefences()
+    {
+        foreach(Transform child in FloodDefences)
         {
-            transform.Find("Channel").gameObject.SetActive(false);
-            transform.Find("Hillslope").gameObject.SetActive(true);
+            child.gameObject.SetActive(false);
         }
     }
 }
