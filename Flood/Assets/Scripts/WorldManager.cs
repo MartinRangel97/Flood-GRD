@@ -45,12 +45,40 @@ public class WorldManager : MonoBehaviour
 
     private void Update()
     {
+        switch (PhaseManager.instance.currentPhase) {
+            case Phase.MapEditor:
+                DrawWater();
+                CalculateSlopes();
+                break;
 
-        DrawWater();
+            case Phase.DefenceSetup:
 
-        // Definitely could be made recursive - might look cleaner too
-        if (Input.GetMouseButtonDown(1))
-        {
+                // INSERT THE DEFENCES AT THIS TIME
+
+                if (Input.GetKeyDown(KeyCode.P)) {
+                    EndDefenceSetupPhase();
+                }
+
+                break;
+
+            case Phase.Simulation:
+                if (Input.GetKeyDown(KeyCode.S)) {
+                    autoSimulate = true;
+                }
+                if (canSimulate) {
+                    if (Input.GetKeyDown(KeyCode.Space) || autoSimulate) {
+                        StepThroughSimulation();
+                    }
+                }
+                break;
+
+
+        }
+
+    }
+
+    private void CalculateSlopes() {
+        if (Input.GetMouseButtonDown(1)) {
             int runs = 0;
             //CalculateHillslopes(waterLocations);
 
@@ -59,35 +87,23 @@ public class WorldManager : MonoBehaviour
 
 
             // Calculates the elevation of each tile based on the path of the river
-            while (path.Count != 0)
-            {
+            while (path.Count != 0) {
                 runs++;
-                path = CalculateHillslopes(path);
+                path = CalculateHillslopes(path);   // THIS FUNCTION CAN BE RECURSIVE
                 //Debug.Log("Run: " + runs);
             }
 
             //Resets the 'Activated' variable 
-            for (int x = 0; x < width; x++)
-            {
-                for (int y = 0; y < height; y++)
-                {
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
                     GetCellScript(x, y).Activation(false);
                 }
             }
             CalculateWorldFlow();
 
-        }
 
-        if (Input.GetKeyDown(KeyCode.S)) {
-            autoSimulate = true;
+            PhaseManager.NextPhase();
         }
-        if (canSimulate) {
-            if (Input.GetKeyDown(KeyCode.Space) || autoSimulate) {
-                StepThroughSimulation();
-                
-            }
-        }
-        
     }
 
     private void StepThroughSimulation() {
@@ -215,6 +231,8 @@ public class WorldManager : MonoBehaviour
 
     private void DrawWater()
     {
+
+
 
         if (Input.GetMouseButton(0) && !hasRained)
         {
@@ -537,99 +555,13 @@ public class WorldManager : MonoBehaviour
         }
     }
 
+    public void EndDefenceSetupPhase() {
 
-
-
-
-
-    //Non Functioning Method, Causes Unity to crash -> potential infinite while loop
-    private void DrawRandomLake((int, int) start)
-    {
-        (int, int) currentCell = start;
-
-
-        for (int i = 0; i < Random.Range(4, 10); i++)
-        {
-            bool badSquare = true;
-            while (badSquare)
-            {
-                badSquare = false;
-                int x = Random.Range(-1, 1);
-                int y = Random.Range(-1, 1);
-
-                if (x == 0 && y == 0)
-                {
-                    badSquare = true;
-                }
-                else if (currentCell.Item1 + x >= width || currentCell.Item1 + x < 0 || currentCell.Item2 + y >= height || currentCell.Item2 + y < 0)
-                {
-                    badSquare = true;
-                }
-                else if (GetCellScript(currentCell.Item1 + x, currentCell.Item2 + y).GetCellType() == CellType.Channel)
-                {
-                    badSquare = true;
-                }
-
-
-
-
-                if (!badSquare)
-                {
-                    currentCell = (currentCell.Item1 + x, currentCell.Item2 + y);
-                    DrawWater(currentCell);
-                    Debug.Log("Drawn River");
-                    if (Random.Range(0, 4) == 0)
-                    {
-                        Debug.Log("Split River");
-                        DrawRandomLake(currentCell);
-                    }
-                }
-            }
+        if (PhaseManager.instance.currentPhase == Phase.DefenceSetup) {
+            PhaseManager.NextPhase();
         }
+        
     }
-
-
-
-
-    /*  
-     *  NOT A PRACTICAL METHOD
-     *  
-    private void DrawHillPeak() {
-        if (Input.GetMouseButtonDown(0)) {
-            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-            if (hit.collider != null) {
-                Debug.Log(hit.collider.gameObject.name + ": " + hit.collider.gameObject.transform.position);
-                Vector3 position = hit.collider.gameObject.transform.position;
-                
-                
-                GetCellScript((int)position.x, (int)position.y).ChangeElevation(GetCellScript((int)position.x, (int)position.y).elevation + 15);
-                UpdateSurroundingCells((int)position.x, (int)position.y, 1);
-            }
-        }
-    }
-    private void UpdateSurroundingCells(int x, int y, int layer) {
-        GameObject[] surrounding = new GameObject[8 * layer];
-        int width = 2 * (layer + 1) - 1;
-        int count = 0;
-        for (int i = -1; i < 2; i++) {
-            for (int j = 0; j < 2; j++) {
-                if (i == 0 && j == 0) {     //Must not recalculate the center square
-                    continue;
-                }
-                try {
-                    surrounding[count] = cells[x + i, y + j];
-                }catch (System.IndexOutOfRangeException e) {
-                    count++;
-                    continue;
-                }
-                if () {
-                }
-                count++;    
-            }
-            
-        }
-    }
-    */
 
 
 }
