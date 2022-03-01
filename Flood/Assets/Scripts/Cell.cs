@@ -46,21 +46,45 @@ public class Cell : MonoBehaviour {
             gameObject.transform.GetChild(0).gameObject.SetActive(false);
         }
 
-        ChangeAttenuation();
+        PlaceFloodDefence();
     }
 
-    private void ChangeAttenuation()
+    private void PlaceFloodDefence()
     {
         switch (FloodDefence)
         {
             case "Trees":
-                attenuation = 0.2f;
+                attenuation = ValueDictionarys.valueDictionary["Trees"].attenuation;
+                capacity = ValueDictionarys.valueDictionary["Trees"].capacity;
                 break;
             case "Leaky Dam":
-                attenuation = 0.5f;
+                attenuation = ValueDictionarys.valueDictionary["Leaky Dam"].attenuation;
+                capacity = ValueDictionarys.valueDictionary["Leaky Dam"].capacity;
                 break;
             case "Dam":
-                attenuation = 0.8f;
+                attenuation = ValueDictionarys.valueDictionary["Dam"].attenuation;
+                capacity = ValueDictionarys.valueDictionary["Dam"].capacity;
+                break;
+            case "Flood Wall":
+                attenuation = ValueDictionarys.valueDictionary["Flood Wall"].attenuation;
+                capacity = ValueDictionarys.valueDictionary["Flood Wall"].capacity;
+                break;
+            case "Dredging":
+                attenuation = ValueDictionarys.valueDictionary["Dredging"].attenuation;
+                capacity = ValueDictionarys.valueDictionary["Dredging"].capacity;
+                break;
+            case "Normal":
+                if (cellType == CellType.Hillslope)
+                {
+                    attenuation = ValueDictionarys.valueDictionary["hillslope"].attenuation;
+                    capacity = ValueDictionarys.valueDictionary["hillslope"].capacity;
+                }
+
+                if (cellType == CellType.Channel)
+                {
+                    attenuation = ValueDictionarys.valueDictionary["channel"].attenuation;
+                    capacity = ValueDictionarys.valueDictionary["channel"].capacity;
+                }
                 break;
         }
     }
@@ -168,96 +192,50 @@ public class Cell : MonoBehaviour {
     public float GetWaterLevel() {
         return waterLevel;
     }
-
-
     public List<string> GetFlow() {
-        //Debug.Log(gameObject.name);
         string[] cellname = gameObject.name.Split('_');
         int x = int.Parse(cellname[1]);
         int y = int.Parse(cellname[2]);
-        //Debug.Log(x + "  " + y);
         int min = 0;
         int max = 50;
 
         List<string> CellFlow = new List<string>();
 
-        //Left
-        if (x - 1 >= min)
+        foreach (GameObject cell in flowsTo)
         {
-            GameObject LeftCell = GameObject.Find("Cell_" + (x-1).ToString() + "_" + y.ToString());
-            if (elevation >= LeftCell.GetComponent<Cell>().GetElevation())
-            {
-                CellFlow.Add("Left");
-            }
-        }
-
-        //Right
-        if (x + 1 <= max)
-        {
-            GameObject RightCell = GameObject.Find("Cell_" + (x + 1).ToString() + "_" + y.ToString());
-            if (elevation >= RightCell.GetComponent<Cell>().GetElevation())
-            {
-                CellFlow.Add("Right");
-            }
-        }
-
-        //Down
-        if (y - 1 >= min)
-        {
-            GameObject DownCell = GameObject.Find("Cell_" + x.ToString() + "_" + (y -1).ToString());
-            if (elevation >= DownCell.GetComponent<Cell>().GetElevation())
-            {
-                CellFlow.Add("Down");
-            }
-        }
-
-        //Up
-        if (y + 1 <= max)
-        {
-            GameObject UpCell = GameObject.Find("Cell_" + x.ToString() + "_" + (y + 1).ToString());
-            if (elevation >= UpCell.GetComponent<Cell>().GetElevation())
-            {
-                CellFlow.Add("Up");
-            }
-        }
-
-        //UpLeft
-        if (x - 1 >= min && y + 1 <= max)
-        {
-            GameObject UpLeftCell = GameObject.Find("Cell_" + (x - 1).ToString() + "_" + (y + 1).ToString());
-            if (elevation >= UpLeftCell.GetComponent<Cell>().GetElevation())
-            {
-                CellFlow.Add("UpLeft");
-            }
-        }
-
-        //DownLeft
-        if (x - 1 >= min && y - 1 >= min)
-        {
-            GameObject DownLeftCell = GameObject.Find("Cell_" + (x - 1).ToString() + "_" + (y - 1).ToString());
-            if (elevation >= DownLeftCell.GetComponent<Cell>().GetElevation())
-            {
-                CellFlow.Add("DownLeft");
-            }
-        }
-
-        //UpRight
-        if (x + 1 <= max && y + 1 <= max)
-        {
-            GameObject UpRightCell = GameObject.Find("Cell_" + (x + 1).ToString() + "_" + (y + 1).ToString());
-            if (elevation >= UpRightCell.GetComponent<Cell>().GetElevation())
+            string[] FlowCellName = cell.name.Split('_');
+            
+            if (x + 1 == int.Parse(FlowCellName[1]) && y + 1 == int.Parse(FlowCellName[2]))
             {
                 CellFlow.Add("UpRight");
             }
-        }
-
-        //DownRight
-        if (x + 1 <= max && y - 1 >= min)
-        {
-            GameObject DownRightCell = GameObject.Find("Cell_" + (x + 1).ToString() + "_" + (y - 1).ToString());
-            if (elevation >= DownRightCell.GetComponent<Cell>().GetElevation())
+            else if (x + 1 == int.Parse(FlowCellName[1]) && y - 1 == int.Parse(FlowCellName[2]))
             {
                 CellFlow.Add("DownRight");
+            }
+            else if (x - 1 == int.Parse(FlowCellName[1]) && y + 1 == int.Parse(FlowCellName[2]))
+            {
+                CellFlow.Add("UpLeft");
+            }
+            else if (x - 1 == int.Parse(FlowCellName[1]) && y - 1 == int.Parse(FlowCellName[2]))
+            {
+                CellFlow.Add("DownLeft");
+            } 
+            else if (x + 1 == int.Parse(FlowCellName[1]))
+            {
+                CellFlow.Add("Right");
+            }
+            else if (x - 1 == int.Parse(FlowCellName[1]))
+            {
+                CellFlow.Add("Left");
+            }
+            else if (y + 1 == int.Parse(FlowCellName[2]))
+            {
+                CellFlow.Add("Up");
+            }
+            else if (y - 1 == int.Parse(FlowCellName[2]))
+            {
+                CellFlow.Add("Down");
             }
         }
 

@@ -88,4 +88,9 @@ public class SelectCells : MonoBehaviour
     {
         SelectedCell.GetComponent<Cell>().FloodDefence = "Flood proofing urban areas";
     }
+
+    public void RemoveDefence()
+    {
+        SelectedCell.GetComponent<Cell>().FloodDefence = "Normal";
+    }
 }
