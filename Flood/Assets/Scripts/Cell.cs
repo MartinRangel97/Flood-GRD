@@ -21,7 +21,7 @@ public class Cell : MonoBehaviour {
 
     public List<GameObject> flowsTo = new List<GameObject>();
 
-    public string FloodDefence = "Normal";
+    public string FloodDefence;
 
     public bool isRiverEnd;
 
@@ -33,6 +33,7 @@ public class Cell : MonoBehaviour {
         cellType = CellType.Channel;    //Botch
         ChangeElevation(maxColourElevation);
         ChangeCellType();
+        FloodDefence = "Normal";
     }
 
     private void Update()

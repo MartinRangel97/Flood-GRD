@@ -35,6 +35,9 @@ public class SelectCells : MonoBehaviour
                     if (hit.collider.name == child.name)
                     {
                         child.GetComponent<Cell>().isSelected = true;
+
+
+
                         ClearFlowArrows();
                         for(var i = 0; i < child.GetComponent<Cell>().GetFlow().Count; i++)
                         {
