@@ -6137,6 +6137,7 @@ GameObject:
   - component: {fileID: 2071923856}
   - component: {fileID: 2071923858}
   - component: {fileID: 2071923857}
+  - component: {fileID: 2071923859}
   m_Layer: 5
   m_Name: Cell Information
   m_TagString: Untagged
@@ -6205,3 +6206,15 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2071923855}
   m_CullTransparentMesh: 1
+--- !u!225 &2071923859
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2071923855}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
