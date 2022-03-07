@@ -7,6 +7,9 @@ public enum CellType { Channel , Hillslope, Urban}
 
 public class Cell : MonoBehaviour {
 
+    SpriteRenderer _sr;
+
+
     public int elevation;
     public int flowElevation;
     public float waterLevel = 0;    // level of water on this tile
@@ -14,6 +17,8 @@ public class Cell : MonoBehaviour {
 
     public float capacity = 0;
     public float attenuation = 0;
+    public int upstreamCells = 0;
+
 
     private static int colourMultiplier = 3;
     private static int maxColourElevation = 255 / colourMultiplier;
@@ -30,9 +35,9 @@ public class Cell : MonoBehaviour {
     public bool isSelected = false;
 
     private void Start() {
-        cellType = CellType.Channel;    //Botch
+        _sr = GetComponent<SpriteRenderer>();
         ChangeElevation(maxColourElevation);
-        ChangeCellType();
+        ChangeCellType(CellType.Hillslope);
         FloodDefence = "Normal";
     }
 
@@ -47,7 +52,10 @@ public class Cell : MonoBehaviour {
             gameObject.transform.GetChild(0).gameObject.SetActive(false);
         }
 
-        //PlaceFloodDefence();
+        PlaceFloodDefence();
+
+        ChangeCellColourWithWater();
+
     }
 
     public void PlaceFloodDefence()
@@ -93,8 +101,7 @@ public class Cell : MonoBehaviour {
                 if (cellType == CellType.Channel)
                 {
                     attenuation = ValueDictionarys.valueDictionary["channel"].attenuation;
-                    capacity = ValueDictionarys.valueDictionary["channel"].capacity;
-                    ChangeColour(0,0,0);
+                    //capacity = ValueDictionarys.valueDictionary["channel"].capacity;
                 }
                 break;
         }
@@ -133,27 +140,82 @@ public class Cell : MonoBehaviour {
         
     }
 
-    public bool ChangeCellType() {
-        if (cellType == CellType.Hillslope) {
-            cellType = CellType.Channel;
-            ChangeElevation(WorldManager.channelElevationValue);
-            ChangeColour(0, 8, 0);
+    private void ChangeCellColourWithWater() {
 
-            attenuation = ValueDictionarys.valueDictionary["channel"].attenuation;
-            capacity = ValueDictionarys.valueDictionary["channel"].capacity;
-
-            return true;
-        } else {
-            cellType = CellType.Hillslope;
-            ChangeElevation(255);
-
-
-            attenuation = ValueDictionarys.valueDictionary["hillslope"].attenuation;
-            capacity = ValueDictionarys.valueDictionary["hillslope"].capacity;
-
-            return false;
+        if (waterLevel == 0 || cellType == CellType.Urban || FloodDefence != "Normal") {
+            return;
         }
+
+
+        
+        float minWater = 0;
+        float maxWater = 15;    //HARDCODED VALUE
+        float green = 0;
+        float blue = 0;
+
+        float tempWaterLevel = waterLevel;
+        if (tempWaterLevel > maxWater) {
+            tempWaterLevel = maxWater;
+        }
+
+        float lerpValue = Mathf.InverseLerp(maxWater, minWater, tempWaterLevel);
+        lerpValue = Mathf.Lerp(0, 510, lerpValue);
+
+        if (lerpValue <= 255) {
+            green = 0;
+            blue = lerpValue;
+        } else {
+            blue = 255;
+            green = lerpValue - 255;
+        }
+
+        if (blue < 20) {
+            blue = 20;
+        }
+
+        ChangeColour(0, (byte)green, (byte)blue);
+
     }
+
+    public bool ChangeCellType(CellType newType) {
+
+        switch (newType) {
+            case CellType.Channel:
+                cellType = CellType.Channel;
+                ChangeElevation(WorldManager.channelElevationValue);
+                ChangeColour(0, 0, 80);
+
+                attenuation = ValueDictionarys.valueDictionary["channel"].attenuation;
+                capacity = ValueDictionarys.valueDictionary["channel"].capacity;
+
+                return true;
+
+            case CellType.Hillslope:
+                cellType = CellType.Hillslope;
+                ChangeElevation(255);
+
+
+                attenuation = ValueDictionarys.valueDictionary["hillslope"].attenuation;
+                capacity = ValueDictionarys.valueDictionary["hillslope"].capacity;
+
+                return false;
+
+            case CellType.Urban:
+                cellType = CellType.Urban;
+                ChangeColour(255, 0, 0);
+
+                attenuation = ValueDictionarys.valueDictionary["hillslope"].attenuation;
+                capacity = ValueDictionarys.valueDictionary["hillslope"].capacity;
+
+                return false;
+        }
+
+        return false;
+        
+        
+    }
+
+    
 
     public void SetFlowList(GameObject item) {
         flowsTo.Add(item);
@@ -164,8 +226,7 @@ public class Cell : MonoBehaviour {
     }
 
     public void ChangeColour(byte r, byte g, byte b) {
-        SpriteRenderer sr = GetComponent<SpriteRenderer>();
-        sr.color = new Color32(r, g, b, 255);
+        _sr.color = new Color32(r, g, b, 255);
     }
 
     public CellType GetCellType() {

@@ -20,16 +20,20 @@ public class WorldManager : MonoBehaviour
     private GameObject[,] cells;
     private bool hasRained = false;
     public List<(int, int)> waterLocations = new List<(int, int)>();
-    public List<Vector2> riverStartLocations = new List<Vector2>();
 
     private List<GameObject> alreadyClicked = new List<GameObject>();
     private Vector2 outletLocation;
     public static int channelElevationValue = 3;
 
+
+    private List<Vector2> ResidentialCells = new List<Vector2>();
+
+
+
     private bool autoSimulate = false;
     private bool canSimulate = false;
     private int step = 0;
-
+    private bool simFinished = false;
 
     private void Awake() {
         ValueDictionarys.SetupDictionarys();
@@ -48,6 +52,7 @@ public class WorldManager : MonoBehaviour
         switch (PhaseManager.instance.currentPhase) {
             case Phase.MapEditor:
                 DrawWater();
+                DrawResidential();
                 CalculateSlopes();
                 break;
 
@@ -66,8 +71,9 @@ public class WorldManager : MonoBehaviour
                     autoSimulate = true;
                 }
                 if (canSimulate) {
-                    if (Input.GetKeyDown(KeyCode.Space) || autoSimulate) {
+                    if ((Input.GetKeyDown(KeyCode.Space) || autoSimulate) && !simFinished) {
                         StepThroughSimulation();
+                        
                     }
                 }
                 break;
@@ -78,7 +84,7 @@ public class WorldManager : MonoBehaviour
     }
 
     private void CalculateSlopes() {
-        if (Input.GetMouseButtonDown(1)) {
+        if (Input.GetKeyDown(KeyCode.P)) {
             int runs = 0;
             //CalculateHillslopes(waterLocations);
 
@@ -106,6 +112,39 @@ public class WorldManager : MonoBehaviour
         }
     }
 
+    public float ResidentialHealth() {
+        float health = 0;
+        foreach (Vector2 position in ResidentialCells) {
+            health += GetCellScript((int)position.x, (int)position.y).gameObject.GetComponent<Residential>().Health;
+        }
+        return health;
+    }
+
+    private void DrawResidential() {
+        if (Input.GetMouseButtonDown(1)) {
+            GameObject clickedCell = GetTileFromClick();
+            if (clickedCell == null) {
+                return;
+            }
+
+            Cell cellScript = GetCellScript((int)clickedCell.transform.position.x, (int)clickedCell.transform.position.y);
+
+            if (cellScript.GetCellType() == CellType.Channel) {
+                return;
+            }
+
+            Vector2 position = (Vector2)clickedCell.transform.position;
+            ResidentialCells.Add(position);
+            cellScript.ChangeCellType(CellType.Urban);
+            Residential residentialScript = clickedCell.AddComponent<Residential>();
+            residentialScript.Setup(position);
+
+
+
+        }
+    }
+
+
     private void StepThroughSimulation() {
         StartCoroutine(Co_StepThroughSimulation(timeBetweenSteps));
         step++;
@@ -119,7 +158,7 @@ public class WorldManager : MonoBehaviour
                 int y = (int)c.transform.position.y;
 
                 GetCellScript(x, y).SetWaterLevel(1);
-                GetCellScript(x, y).ChangeColour(0, 0, 255 - 10);
+                //GetCellScript(x, y).ChangeColour(0, 0, 255 - 10);
             }
 
             hasRained = true;
@@ -181,9 +220,19 @@ public class WorldManager : MonoBehaviour
 
             GetCellScript((int)outletLocation.x, (int)outletLocation.y).waterLevel = 0f;
 
+            foreach (Vector2 position in ResidentialCells) {
+                Cell c = GetCellScript((int)position.x, (int)position.y);
+                Residential r = c.gameObject.GetComponent<Residential>();
+
+                r.ReduceHealth(c.GetWaterLevel());
+
+            }
+
             canSimulate = false;
             yield return new WaitForSeconds(waitTimeSeconds);
             canSimulate = true;
+
+            
 
         }
     }
@@ -196,13 +245,15 @@ public class WorldManager : MonoBehaviour
 
             cScript.ChangeWaterLevel(cScript.waterGainedThisCycle);
             cScript.waterGainedThisCycle = 0;
-            if (cScript.waterLevel < 0.001f) {      // THRESHOLD VALUE for Flood Visual
+            if (cScript.waterLevel < 0.05f) {      // THRESHOLD VALUE for Flood Visual
                 cScript.waterLevel = 0;
                 cScript.ChangeElevation(cScript.elevation);
-            } else {
+            } 
+            
+            /*else {
                 cScript.ChangeColour(0, 0, (byte)(255 - (10 * cScript.GetWaterLevel())));
             }
-
+            */
 
         }
     }
@@ -258,35 +309,48 @@ public class WorldManager : MonoBehaviour
                 return;
             }
 
-            if (GetCellScript((int)position.x, (int)position.y).ChangeCellType())
-            {
-                waterLocations.Add(((int)position.x, (int)position.y));
-                if (waterLocations.Count == 1)
-                {
-                    outletLocation = new Vector2(position.x, position.y);
-                    GetCellScript((int)outletLocation.x, (int)outletLocation.y).isRiverEnd = true;
-                }
-            }
-            else
-            {
-                waterLocations.Remove(((int)position.x, (int)position.y));
+            Cell c = GetCellScript((int)position.x, (int)position.y);
+            switch (c.GetCellType()) {
+                
+                //Change hillslope to channel
+                case CellType.Hillslope:
+                    c.ChangeCellType(CellType.Channel);
+                    waterLocations.Add(((int)position.x, (int)position.y));
+                    
+                    if (waterLocations.Count == 1) {
+                        outletLocation = new Vector2(position.x, position.y);
+                        c.isRiverEnd = true;
+                    }
+                    break;
+
+                //Change urban to channel
+                case CellType.Urban:
+                    c.ChangeCellType(CellType.Channel);
+                    waterLocations.Add(((int)position.x, (int)position.y));
+
+                    if (waterLocations.Count == 1) {
+                        outletLocation = new Vector2(position.x, position.y);
+                        c.isRiverEnd = true;
+                    }
+                    break;
+
+                //Change channel to hillslope
+                case CellType.Channel:
+                    c.ChangeCellType(CellType.Hillslope);
+                    waterLocations.Remove(((int)position.x, (int)position.y));
+                    break;
             }
 
             alreadyClicked.Add(cellClicked);
         }
 
-        if (Input.GetMouseButtonUp(0))
-        {
+        if (Input.GetMouseButtonUp(0)) {
             alreadyClicked = new List<GameObject>();
         }
 
     }
 
-    private void DrawWater((int, int) location)
-    {
-        GetCellScript(location.Item1, location.Item2).ChangeCellType();
-        waterLocations.Add(location);
-    }
+    
 
     public List<(int, int)> CalculateHillslopes(List<(int, int)> listOfLocations)
     {
@@ -429,7 +493,11 @@ public class WorldManager : MonoBehaviour
 
         foreach ((int, int) w in waterLocations)
         {
-            GetCellScript(w.Item1, w.Item2).ChangeElevation(channelElevationValue);
+
+            Cell c = GetCellScript(w.Item1, w.Item2);
+
+            c.ChangeElevation(channelElevationValue);
+            c.capacity = 0.01f * c.upstreamCells;   //HARDCODED VALUE
         }
 
         canSimulate = true;
@@ -438,7 +506,7 @@ public class WorldManager : MonoBehaviour
 
     // Recursive function for calculating the elevation of rivers when determining the direction of flow.
 
-    public void CalculateRiverCellElevationForFlow(Vector2 cell, int elevation)
+    public int CalculateRiverCellElevationForFlow(Vector2 cell, int elevation)
     {
 
 
@@ -453,8 +521,10 @@ public class WorldManager : MonoBehaviour
             }
         }
 
+        Cell c = GetCellScript((int)cell.x, (int)cell.y);
 
-        GetCellScript((int)cell.x, (int)cell.y).ChangeElevation(elevation);
+        c.ChangeElevation(elevation);
+        c.flowElevation = elevation;
         foreach (Vector2 n in neighbours)
         {
             Cell cellScript = GetCellScript((int)n.x, (int)n.y);
@@ -467,10 +537,16 @@ public class WorldManager : MonoBehaviour
             }
         }
 
+
         foreach (Vector2 n in unsetNeighbours)
         {
-            CalculateRiverCellElevationForFlow(n, elevation + 1);
+            c.upstreamCells += CalculateRiverCellElevationForFlow(n, elevation + 1);
+            c.upstreamCells++;
         }
+
+        Debug.Log("elevation: " + elevation + " upstreamCells: " + c.upstreamCells);
+
+        return c.upstreamCells;
 
     }
 
@@ -547,10 +623,13 @@ public class WorldManager : MonoBehaviour
         RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
         if (hit.collider != null)
         {
+
             return hit.collider.gameObject;
         }
         else
         {
+            Debug.Log("No tile was clicked");
+
             return null;
         }
     }
@@ -558,6 +637,7 @@ public class WorldManager : MonoBehaviour
     public void EndDefenceSetupPhase() {
 
         if (PhaseManager.instance.currentPhase == Phase.DefenceSetup) {
+            simFinished = false;
             PhaseManager.NextPhase();
         }
         

@@ -3839,7 +3839,6 @@ MonoBehaviour:
   cellGO: {fileID: 6754237565321258515, guid: a0c03d09b76a1724bbefaa7cb003a369, type: 3}
   cache: {fileID: 1104522898}
   timeBetweenSteps: 0.477
-  riverStartLocations: []
 --- !u!4 &1012478833
 Transform:
   m_ObjectHideFlags: 0
