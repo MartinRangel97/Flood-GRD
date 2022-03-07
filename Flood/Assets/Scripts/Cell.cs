@@ -52,7 +52,7 @@ public class Cell : MonoBehaviour {
             gameObject.transform.GetChild(0).gameObject.SetActive(false);
         }
 
-        PlaceFloodDefence();
+        //PlaceFloodDefence();
 
         ChangeCellColourWithWater();
 
@@ -102,6 +102,11 @@ public class Cell : MonoBehaviour {
                 {
                     attenuation = ValueDictionarys.valueDictionary["channel"].attenuation;
                     //capacity = ValueDictionarys.valueDictionary["channel"].capacity;
+                    ChangeColour(0, 0, 0);
+                }
+                if (cellType == CellType.Urban)
+                {
+                    ChangeColour(255, 0, 0);
                 }
                 break;
         }
