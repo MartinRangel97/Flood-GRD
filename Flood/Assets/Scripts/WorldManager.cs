@@ -220,14 +220,19 @@ public class WorldManager : MonoBehaviour
 
             GetCellScript((int)outletLocation.x, (int)outletLocation.y).waterLevel = 0f;
 
+            foreach (Vector2 position in ResidentialCells) {
+                Cell c = GetCellScript((int)position.x, (int)position.y);
+                Residential r = c.gameObject.GetComponent<Residential>();
+
+                r.ReduceHealth(c.GetWaterLevel());
+
+            }
+
             canSimulate = false;
             yield return new WaitForSeconds(waitTimeSeconds);
             canSimulate = true;
 
-            /*if (GetCellScript((int)outletLocation.x, (int)outletLocation.y).waterLevel <= 0) {
-                simFinished = true;
-                Debug.Log("SIM FINISHED");
-            }*/
+            
 
         }
     }
@@ -240,7 +245,7 @@ public class WorldManager : MonoBehaviour
 
             cScript.ChangeWaterLevel(cScript.waterGainedThisCycle);
             cScript.waterGainedThisCycle = 0;
-            if (cScript.waterLevel < 0.001f) {      // THRESHOLD VALUE for Flood Visual
+            if (cScript.waterLevel < 0.05f) {      // THRESHOLD VALUE for Flood Visual
                 cScript.waterLevel = 0;
                 cScript.ChangeElevation(cScript.elevation);
             } 
@@ -492,7 +497,7 @@ public class WorldManager : MonoBehaviour
             Cell c = GetCellScript(w.Item1, w.Item2);
 
             c.ChangeElevation(channelElevationValue);
-            c.capacity = 0.2f * c.upstreamCells;   //HARDCODED VALUE
+            c.capacity = 0.01f * c.upstreamCells;   //HARDCODED VALUE
         }
 
         canSimulate = true;

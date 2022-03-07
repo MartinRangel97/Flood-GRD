@@ -21,6 +21,7 @@ public class Residential : MonoBehaviour {
         Health -= damageValue;
         if (Health <= 0) {
             IsDestroyed = true;
+            gameObject.GetComponent<Cell>().ChangeColour(0, 0, 0);
         }
     }
 
