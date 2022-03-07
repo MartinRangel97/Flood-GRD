@@ -47,10 +47,10 @@ public class Cell : MonoBehaviour {
             gameObject.transform.GetChild(0).gameObject.SetActive(false);
         }
 
-        PlaceFloodDefence();
+        //PlaceFloodDefence();
     }
 
-    private void PlaceFloodDefence()
+    public void PlaceFloodDefence()
     {
         switch (FloodDefence)
         {

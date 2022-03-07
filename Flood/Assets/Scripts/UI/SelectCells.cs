@@ -35,9 +35,6 @@ public class SelectCells : MonoBehaviour
                     if (hit.collider.name == child.name)
                     {
                         child.GetComponent<Cell>().isSelected = true;
-
-
-
                         ClearFlowArrows();
                         for(var i = 0; i < child.GetComponent<Cell>().GetFlow().Count; i++)
                         {
@@ -65,43 +62,42 @@ public class SelectCells : MonoBehaviour
     public void PlaceTrees()
     {
         SelectedCell.GetComponent<Cell>().FloodDefence = "Trees";
-        
-
-
+        SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
     }
 
     public void PlaceDredging()
     {
         SelectedCell.GetComponent<Cell>().FloodDefence = "Dredging";
-        
+        SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
     }
 
     public void PlaceDam()
     {
         SelectedCell.GetComponent<Cell>().FloodDefence = "Dam";
-        
+        SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
     }
 
     public void PlaceLeakyDam()
     { 
         SelectedCell.GetComponent<Cell>().FloodDefence = "Leaky Dam";
-        
+        SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
     }
 
     public void PlaceFloodWall()
     {
         SelectedCell.GetComponent<Cell>().FloodDefence = "Flood Wall";
-        
+        SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
     }
 
     public void PlaceFPUA() //Flood proofing urban areas
     {
         SelectedCell.GetComponent<Cell>().FloodDefence = "Flood proofing urban areas";
-        
+        SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
     }
 
     public void RemoveDefence()
     {
         SelectedCell.GetComponent<Cell>().FloodDefence = "Normal";
+        SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
     }
 }
