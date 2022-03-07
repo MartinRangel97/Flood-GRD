@@ -58,7 +58,7 @@ public class Cell : MonoBehaviour {
 
     }
 
-    private void PlaceFloodDefence()
+    public void PlaceFloodDefence()
     {
         switch (FloodDefence)
         {
