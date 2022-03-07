@@ -65,42 +65,43 @@ public class SelectCells : MonoBehaviour
     public void PlaceTrees()
     {
         SelectedCell.GetComponent<Cell>().FloodDefence = "Trees";
-        SelectedCell.GetComponent<SpriteRenderer>().color = new Color32(0, 51, 25, 255); //Dark Green
+        
+
+
     }
 
     public void PlaceDredging()
     {
         SelectedCell.GetComponent<Cell>().FloodDefence = "Dredging";
-        SelectedCell.GetComponent<SpriteRenderer>().color = new Color32(51, 25, 0, 255); //Brown
+        
     }
 
     public void PlaceDam()
     {
         SelectedCell.GetComponent<Cell>().FloodDefence = "Dam";
-        SelectedCell.GetComponent<SpriteRenderer>().color = new Color32(64, 64, 64, 255); //Dark Grey
+        
     }
 
     public void PlaceLeakyDam()
     { 
         SelectedCell.GetComponent<Cell>().FloodDefence = "Leaky Dam";
-        SelectedCell.GetComponent<SpriteRenderer>().color = new Color32(160, 160, 160, 255); //Light Grey
+        
     }
 
     public void PlaceFloodWall()
     {
         SelectedCell.GetComponent<Cell>().FloodDefence = "Flood Wall";
-        SelectedCell.GetComponent<SpriteRenderer>().color = new Color32(255, 0, 0, 255); //Red
+        
     }
 
     public void PlaceFPUA() //Flood proofing urban areas
     {
         SelectedCell.GetComponent<Cell>().FloodDefence = "Flood proofing urban areas";
-        SelectedCell.GetComponent<SpriteRenderer>().color = new Color32(0, 255, 255, 255); //Yellow
+        
     }
 
     public void RemoveDefence()
     {
         SelectedCell.GetComponent<Cell>().FloodDefence = "Normal";
-        SelectedCell.GetComponent<SpriteRenderer>().color = new Color32(0, 51, 25, 255); //placeholder
     }
 }
