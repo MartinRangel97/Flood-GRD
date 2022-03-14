@@ -2429,6 +2429,7 @@ GameObject:
   - component: {fileID: 622036982}
   - component: {fileID: 622036984}
   - component: {fileID: 622036983}
+  - component: {fileID: 622036985}
   m_Layer: 5
   m_Name: Money
   m_TagString: Untagged
@@ -2497,6 +2498,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 622036981}
   m_CullTransparentMesh: 1
+--- !u!114 &622036985
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 622036981}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e68f462f1524354185628d792ea7819, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &647404994
 GameObject:
   m_ObjectHideFlags: 0
@@ -3838,7 +3851,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cellGO: {fileID: 6754237565321258515, guid: a0c03d09b76a1724bbefaa7cb003a369, type: 3}
   cache: {fileID: 1104522898}
-  timeBetweenSteps: 0.477
+  timeBetweenSteps: 2
+  Credits: {fileID: 622036981}
 --- !u!4 &1012478833
 Transform:
   m_ObjectHideFlags: 0
