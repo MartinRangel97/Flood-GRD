@@ -4014,6 +4014,7 @@ MonoBehaviour:
   SelectedCell: {fileID: 0}
   DefenceType: {fileID: 1946209996}
   ContributingCells: {fileID: 362043492}
+  Credits: {fileID: 622036981}
 --- !u!1 &1152095945
 GameObject:
   m_ObjectHideFlags: 0
