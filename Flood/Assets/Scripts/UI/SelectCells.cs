@@ -64,6 +64,7 @@ public class SelectCells : MonoBehaviour
     {
         if(SelectedCell.GetComponent<Cell>().FloodDefence != "Trees")
         {
+            RefundCredits();
             SelectedCell.GetComponent<Cell>().FloodDefence = "Trees";
             RemoveCredits();
             SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
@@ -74,6 +75,7 @@ public class SelectCells : MonoBehaviour
     {
         if(SelectedCell.GetComponent<Cell>().FloodDefence != "Dredging")
         {
+            RefundCredits();
             SelectedCell.GetComponent<Cell>().FloodDefence = "Dredging";
             RemoveCredits();
             SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
@@ -84,6 +86,7 @@ public class SelectCells : MonoBehaviour
     {
         if(SelectedCell.GetComponent<Cell>().FloodDefence != "Dam")
         {
+            RefundCredits();
             SelectedCell.GetComponent<Cell>().FloodDefence = "Dam";
             RemoveCredits();
             SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
@@ -94,6 +97,7 @@ public class SelectCells : MonoBehaviour
     { 
         if(SelectedCell.GetComponent<Cell>().FloodDefence != "Leaky Dam")
         {
+            RefundCredits();
             SelectedCell.GetComponent<Cell>().FloodDefence = "Leaky Dam";
             RemoveCredits();
             SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
@@ -104,6 +108,7 @@ public class SelectCells : MonoBehaviour
     {
         if(SelectedCell.GetComponent<Cell>().FloodDefence != "Flood Wall")
         {
+            RefundCredits();
             SelectedCell.GetComponent<Cell>().FloodDefence = "Flood Wall";
             RemoveCredits();
             SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
@@ -115,6 +120,7 @@ public class SelectCells : MonoBehaviour
     {
         if (SelectedCell.GetComponent<Cell>().FloodDefence != "Flood proofing urban areas")
         {
+            RefundCredits();
             SelectedCell.GetComponent<Cell>().FloodDefence = "Flood proofing urban areas";
             RemoveCredits();
             SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
@@ -133,59 +139,54 @@ public class SelectCells : MonoBehaviour
 
     private void RemoveCredits()
     {
-        int money = int.Parse(Credits.GetComponent<Text>().text);
-
         switch (SelectedCell.GetComponent<Cell>().FloodDefence)
         {
             case "Trees":
-                money = money - 1;
+                Credits.GetComponent<Credits>().RemoveCredits(1);
                 break;
             case "Flood proofing urban areas":
-                money = money - 10;
+                Credits.GetComponent<Credits>().RemoveCredits(10);
                 break;
             case "Flood Wall":
-                money = money - 20;
+                Credits.GetComponent<Credits>().RemoveCredits(20);
                 break;
             case "Leaky Dam":
-                money = money - 10;
+                Credits.GetComponent<Credits>().RemoveCredits(10);
                 break;
             case "Dam":
-                money = money - 100;
+                Credits.GetComponent<Credits>().RemoveCredits(100);
                 break;
             case "Dredging":
-                money = money - 50;
+                Credits.GetComponent<Credits>().RemoveCredits(50);
                 break;
         }
 
-        Credits.GetComponent<Text>().text = money.ToString();
+        
     }
 
     private void RefundCredits()
-    {
-        int money = int.Parse(Credits.GetComponent<Text>().text);
+    { 
 
         switch (SelectedCell.GetComponent<Cell>().FloodDefence)
         {
             case "Trees":
-                money = money + 1;
+                Credits.GetComponent<Credits>().AddCredits(1);
                 break;
             case "Flood proofing urban areas":
-                money = money + 10;
+                Credits.GetComponent<Credits>().AddCredits(10);
                 break;
             case "Flood Wall":
-                money = money = 20;
+                Credits.GetComponent<Credits>().AddCredits(20);
                 break;
             case "Leaky Dam":
-                money = money + 10;
+                Credits.GetComponent<Credits>().AddCredits(10);
                 break;
             case "Dam":
-                money = money + 100;
+                Credits.GetComponent<Credits>().AddCredits(100);
                 break;
             case "Dredging":
-                money = money + 50;
+                Credits.GetComponent<Credits>().AddCredits(50);
                 break;
         }
-
-        Credits.GetComponent<Text>().text = money.ToString();
     }
 }

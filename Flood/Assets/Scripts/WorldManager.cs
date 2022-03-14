@@ -28,7 +28,7 @@ public class WorldManager : MonoBehaviour
 
     private List<Vector2> ResidentialCells = new List<Vector2>();
 
-
+    public GameObject Credits;
 
     private bool autoSimulate = false;
     private bool canSimulate = false;
@@ -225,7 +225,7 @@ public class WorldManager : MonoBehaviour
                 Residential r = c.gameObject.GetComponent<Residential>();
 
                 r.ReduceHealth(c.GetWaterLevel());
-
+                Credits.GetComponent<Credits>().RemoveCredits(c.GetWaterLevel());
             }
 
             canSimulate = false;
