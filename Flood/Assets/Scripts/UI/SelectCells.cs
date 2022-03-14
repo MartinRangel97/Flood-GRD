@@ -9,6 +9,7 @@ public class SelectCells : MonoBehaviour
     public GameObject SelectedCell;
     public GameObject DefenceType;
     public GameObject ContributingCells;
+    public GameObject Credits;
 
     void Update()
     {
@@ -61,43 +62,130 @@ public class SelectCells : MonoBehaviour
 
     public void PlaceTrees()
     {
-        SelectedCell.GetComponent<Cell>().FloodDefence = "Trees";
-        SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
+        if(SelectedCell.GetComponent<Cell>().FloodDefence != "Trees")
+        {
+            SelectedCell.GetComponent<Cell>().FloodDefence = "Trees";
+            RemoveCredits();
+            SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
+        }
     }
 
     public void PlaceDredging()
     {
-        SelectedCell.GetComponent<Cell>().FloodDefence = "Dredging";
-        SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
+        if(SelectedCell.GetComponent<Cell>().FloodDefence != "Dredging")
+        {
+            SelectedCell.GetComponent<Cell>().FloodDefence = "Dredging";
+            RemoveCredits();
+            SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
+        }
     }
 
     public void PlaceDam()
     {
-        SelectedCell.GetComponent<Cell>().FloodDefence = "Dam";
-        SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
+        if(SelectedCell.GetComponent<Cell>().FloodDefence != "Dam")
+        {
+            SelectedCell.GetComponent<Cell>().FloodDefence = "Dam";
+            RemoveCredits();
+            SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
+        }
     }
 
     public void PlaceLeakyDam()
     { 
-        SelectedCell.GetComponent<Cell>().FloodDefence = "Leaky Dam";
-        SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
+        if(SelectedCell.GetComponent<Cell>().FloodDefence != "Leaky Dam")
+        {
+            SelectedCell.GetComponent<Cell>().FloodDefence = "Leaky Dam";
+            RemoveCredits();
+            SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
+        }
     }
 
     public void PlaceFloodWall()
     {
-        SelectedCell.GetComponent<Cell>().FloodDefence = "Flood Wall";
-        SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
+        if(SelectedCell.GetComponent<Cell>().FloodDefence != "Flood Wall")
+        {
+            SelectedCell.GetComponent<Cell>().FloodDefence = "Flood Wall";
+            RemoveCredits();
+            SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
+        }
+        
     }
 
     public void PlaceFPUA() //Flood proofing urban areas
     {
-        SelectedCell.GetComponent<Cell>().FloodDefence = "Flood proofing urban areas";
-        SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
+        if (SelectedCell.GetComponent<Cell>().FloodDefence != "Flood proofing urban areas")
+        {
+            SelectedCell.GetComponent<Cell>().FloodDefence = "Flood proofing urban areas";
+            RemoveCredits();
+            SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
+        }
     }
 
     public void RemoveDefence()
     {
-        SelectedCell.GetComponent<Cell>().FloodDefence = "Normal";
-        SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
+        if(SelectedCell.GetComponent<Cell>().FloodDefence != "Normal")
+        {
+            RefundCredits();
+            SelectedCell.GetComponent<Cell>().FloodDefence = "Normal";
+            SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
+        }
+    }
+
+    private void RemoveCredits()
+    {
+        int money = int.Parse(Credits.GetComponent<Text>().text);
+
+        switch (SelectedCell.GetComponent<Cell>().FloodDefence)
+        {
+            case "Trees":
+                money = money - 1;
+                break;
+            case "Flood proofing urban areas":
+                money = money - 10;
+                break;
+            case "Flood Wall":
+                money = money - 20;
+                break;
+            case "Leaky Dam":
+                money = money - 10;
+                break;
+            case "Dam":
+                money = money - 100;
+                break;
+            case "Dredging":
+                money = money - 50;
+                break;
+        }
+
+        Credits.GetComponent<Text>().text = money.ToString();
+    }
+
+    private void RefundCredits()
+    {
+        int money = int.Parse(Credits.GetComponent<Text>().text);
+
+        switch (SelectedCell.GetComponent<Cell>().FloodDefence)
+        {
+            case "Trees":
+                money = money + 1;
+                break;
+            case "Flood proofing urban areas":
+                money = money + 10;
+                break;
+            case "Flood Wall":
+                money = money = 20;
+                break;
+            case "Leaky Dam":
+                money = money + 10;
+                break;
+            case "Dam":
+                money = money + 100;
+                break;
+            case "Dredging":
+                money = money + 50;
+                break;
+        }
+
+        Credits.GetComponent<Text>().text = money.ToString();
     }
 }
