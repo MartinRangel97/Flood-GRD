@@ -40,8 +40,8 @@ public class WorldManager : MonoBehaviour
     }
 
     private void Start() {
-        width = 51;
-        height = 51;
+        width = 31;
+        height = 31;
         cells = new GameObject[width, height];
         InitialiseWorld();
         //DrawRandomLake((15, 3));
@@ -61,7 +61,7 @@ public class WorldManager : MonoBehaviour
                 // INSERT THE DEFENCES AT THIS TIME
 
                 if (Input.GetKeyDown(KeyCode.P)) {
-                    EndDefenceSetupPhase();
+                    PhaseManager.NextPhase();
                 }
 
                 break;
@@ -81,6 +81,23 @@ public class WorldManager : MonoBehaviour
 
         }
 
+        if (Input.GetKeyDown(KeyCode.R) && PhaseManager.instance.currentPhase != Phase.MapEditor) {
+            ResetWorld();
+        }
+
+    }
+
+    private void ResetWorld() {
+        foreach (GameObject go in cells) {
+
+            Cell script = go.GetComponent<Cell>();
+            script.ResetCell();
+        }
+
+        hasRained = false;
+        autoSimulate = false;
+        PhaseManager.Reset(Phase.DefenceSetup);
+        Debug.Log("RESET WORLD");
     }
 
     private void CalculateSlopes() {
@@ -245,7 +262,7 @@ public class WorldManager : MonoBehaviour
 
             cScript.ChangeWaterLevel(cScript.waterGainedThisCycle);
             cScript.waterGainedThisCycle = 0;
-            if (cScript.waterLevel < 0.05f) {      // THRESHOLD VALUE for Flood Visual
+            if (cScript.waterLevel < 0.005f) {      // THRESHOLD VALUE for Flood Visual
                 cScript.waterLevel = 0;
                 cScript.ChangeElevation(cScript.elevation);
             } 
@@ -634,14 +651,7 @@ public class WorldManager : MonoBehaviour
         }
     }
 
-    public void EndDefenceSetupPhase() {
-
-        if (PhaseManager.instance.currentPhase == Phase.DefenceSetup) {
-            simFinished = false;
-            PhaseManager.NextPhase();
-        }
-        
-    }
+    
 
 
 }

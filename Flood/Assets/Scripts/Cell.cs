@@ -52,9 +52,8 @@ public class Cell : MonoBehaviour {
             gameObject.transform.GetChild(0).gameObject.SetActive(false);
         }
 
-        //PlaceFloodDefence();
 
-        ChangeCellColourWithWater();
+        ChangeCellColourWithWater();    //Called every frame (Needs to be changed)
 
     }
 
@@ -414,6 +413,17 @@ public class Cell : MonoBehaviour {
         return ContCells;
     }
 
+    public void ResetCell() {
+        FloodDefence = "Normal";
+        waterLevel = 0;
+        waterGainedThisCycle = 0;
+        ChangeElevation(elevation);
+        if (cellType == CellType.Channel) {
+            ChangeCellType(CellType.Channel);
+            attenuation = ValueDictionarys.valueDictionary["channel"].attenuation;
+            capacity = 0.01f * upstreamCells;   //HARDCODED VALUE
+        }
 
+    }
 
 }

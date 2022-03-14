@@ -34,5 +34,9 @@ public class PhaseManager : MonoBehaviour {
         }
     }
 
+    public static void Reset(Phase phase) {
+        instance.currentPhase = phase;
+    }
+
 
 }
