@@ -103,32 +103,28 @@ public class WorldManager : MonoBehaviour
     }
 
     public void CalculateSlopes() {
-        //if (Input.GetKeyDown(KeyCode.P)) {
-            int runs = 0;
-            //CalculateHillslopes(waterLocations);
 
-            List<(int, int)> path = waterLocations;
+        int runs = 0;
 
+        List<(int, int)> path = waterLocations;
 
 
-            // Calculates the elevation of each tile based on the path of the river
-            while (path.Count != 0) {
-                runs++;
-                path = CalculateHillslopes(path);   // THIS FUNCTION CAN BE RECURSIVE
-                //Debug.Log("Run: " + runs);
+
+        // Calculates the elevation of each tile based on the path of the river
+        while (path.Count != 0) {
+            runs++;
+            path = CalculateHillslopes(path);   // THIS FUNCTION CAN BE RECURSIVE
+            //Debug.Log("Run: " + runs);
+        }
+
+        //Resets the 'Activated' variable 
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                GetCellScript(x, y).Activation(false);
             }
-
-            //Resets the 'Activated' variable 
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
-                    GetCellScript(x, y).Activation(false);
-                }
-            }
-            CalculateWorldFlow();
-
-
-            //PhaseManager.NextPhase();
-        //}
+        }
+        CalculateWorldFlow();
+            
     }
 
     public float ResidentialHealth() {
@@ -508,7 +504,7 @@ public class WorldManager : MonoBehaviour
         }
 
 
-        CalculateRiverCellElevationForFlow(outletLocation, 1);
+        CalculateRiverCellElevationForFlow2(outletLocation, 1);
 
         foreach ((int, int) w in waterLocations)
         {
@@ -520,6 +516,67 @@ public class WorldManager : MonoBehaviour
         }
 
         canSimulate = true;
+
+    }
+
+    public int CalculateRiverCellElevationForFlow2(Vector2 cell, int elevation) {
+
+        List<Vector2> temp = GetNeighbours(cell);
+        List<Vector2> neighbours = new List<Vector2>();
+        List<Vector2> unsetNeighbours = new List<Vector2>();
+        
+        foreach (Vector2 n in temp) {
+            if (GetCellScript((int)n.x, (int)n.y).GetCellType() == CellType.Channel) {
+                neighbours.Add(n);
+            }
+        }
+
+        List<Vector2> straight = new List<Vector2>();
+        List<Vector2> diagonal = new List<Vector2>();
+
+        foreach (Vector2 n in neighbours) {
+            if (Mathf.Abs(cell.x - n.x) == 1 && Mathf.Abs(cell.y - n.y) == 1) {
+                diagonal.Add(n);
+            } else {
+                straight.Add(n);
+            }
+        }
+
+        neighbours.Clear();
+        neighbours.AddRange(straight);
+        neighbours.AddRange(diagonal);
+
+
+        bool hasAddedSelf = false;
+        foreach (Vector2 n in neighbours) {
+            if (AddSelfToList(cell, n)) {
+                hasAddedSelf = true;
+            } 
+                
+        }
+
+        if (hasAddedSelf) {
+            foreach (Vector2 n in neighbours) {
+                CalculateRiverCellElevationForFlow2(n, elevation + 1);
+            }
+        }
+        
+
+
+
+        return 1;
+    }
+
+    private bool AddSelfToList(Vector2 cellVector, Vector2 neighbourVector) {
+        Cell cell = GetCellScript((int)cellVector.x, (int)cellVector.y);
+        Cell neighbour = GetCellScript((int)neighbourVector.x, (int)neighbourVector.y);
+
+        if (neighbour.GetFlowList().Contains(cell.gameObject) || cell.GetFlowList().Contains(neighbour.gameObject)) {
+            return false;
+        }
+
+        neighbour.SetFlowList(cell.gameObject);
+        return true;
 
     }
 
@@ -544,6 +601,10 @@ public class WorldManager : MonoBehaviour
 
         c.ChangeElevation(elevation);
         c.flowElevation = elevation;
+
+        int tempUpstream = 0;
+
+
         foreach (Vector2 n in neighbours)
         {
             Cell cellScript = GetCellScript((int)n.x, (int)n.y);
@@ -553,19 +614,32 @@ public class WorldManager : MonoBehaviour
                 cellScript.ChangeElevation(elevation + 1);
                 unsetNeighbours.Add(n);
                 cellScript.SetFlowList(cells[(int)cell.x, (int)cell.y]);
+
+            }else if (cellScript.GetElevation() == elevation + 1) {
+
+
+                cellScript.SetFlowList(cells[(int)cell.x, (int)cell.y]);
+                c.upstreamCells += cellScript.upstreamCells + 1;
+                tempUpstream += cellScript.upstreamCells + 1;
+
+            }else if (cellScript.GetElevation() == elevation) {
+                c.upstreamCells += cellScript.upstreamCells + 1;
+                tempUpstream += cellScript.upstreamCells + 1;
             }
         }
 
-
+        
         foreach (Vector2 n in unsetNeighbours)
         {
             c.upstreamCells += CalculateRiverCellElevationForFlow(n, elevation + 1);
             c.upstreamCells++;
+
         }
 
         Debug.Log("elevation: " + elevation + " upstreamCells: " + c.upstreamCells);
 
-        return c.upstreamCells;
+
+        return c.upstreamCells - tempUpstream;
 
     }
 

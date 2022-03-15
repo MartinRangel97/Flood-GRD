@@ -188,7 +188,13 @@ public class Cell : MonoBehaviour {
 
             case CellType.Hillslope:
                 cellType = CellType.Hillslope;
-                ChangeElevation(elevation);
+                if (PhaseManager.instance.currentPhase == Phase.MapEditor) {
+                    ChangeElevation(255);
+                } else {
+                    ChangeElevation(elevation);
+                }
+                
+                
 
 
                 attenuation = ValueDictionarys.valueDictionary["hillslope"].attenuation;
