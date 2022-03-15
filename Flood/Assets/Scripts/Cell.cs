@@ -62,6 +62,8 @@ public class Cell : MonoBehaviour {
     {
 
         ChangeCellType(cellType);   //Return the attenuation and capacity back to standard
+        FloodDefence = defence;
+
 
         if (!defence.Equals("Normal")) {
             attenuation += ValueDictionarys.valueDictionary[defence].attenuation;
@@ -180,7 +182,7 @@ public class Cell : MonoBehaviour {
                 ChangeColour(0, 0, 80);
 
                 attenuation = ValueDictionarys.valueDictionary["channel"].attenuation;
-                capacity = ValueDictionarys.valueDictionary["channel"].capacity;
+                capacity = 0.01f * upstreamCells; // HARDCODED VALUE
 
                 return true;
 
