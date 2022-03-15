@@ -62,105 +62,96 @@ public class SelectCells : MonoBehaviour
 
     public void PlaceTrees()
     {
-        if(SelectedCell.GetComponent<Cell>().FloodDefence != "Trees")
+
+        Cell cell = SelectedCell.GetComponent<Cell>();
+
+        if(!cell.FloodDefence.Equals("Trees"))
         {
             RefundCredits();
-            SelectedCell.GetComponent<Cell>().FloodDefence = "Trees";
-            RemoveCredits();
-            SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
+            cell.PlaceFloodDefence("Trees");
+            RemoveCredits(ValueDictionarys.valueDictionary["Trees"].cost);
+            
         }
     }
 
     public void PlaceDredging()
     {
-        if(SelectedCell.GetComponent<Cell>().FloodDefence != "Dredging")
+
+        Cell cell = SelectedCell.GetComponent<Cell>();
+
+        if (!cell.FloodDefence.Equals("Dredging"))
         {
             RefundCredits();
-            SelectedCell.GetComponent<Cell>().FloodDefence = "Dredging";
-            RemoveCredits();
-            SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
+            cell.PlaceFloodDefence("Dredging");
+            RemoveCredits(ValueDictionarys.valueDictionary["Dredging"].cost);
+            
         }
     }
 
     public void PlaceDam()
     {
-        if(SelectedCell.GetComponent<Cell>().FloodDefence != "Dam")
+        Cell cell = SelectedCell.GetComponent<Cell>();
+
+        if (!cell.FloodDefence.Equals("Dam"))
         {
             RefundCredits();
-            SelectedCell.GetComponent<Cell>().FloodDefence = "Dam";
-            RemoveCredits();
-            SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
+            cell.PlaceFloodDefence("Dam");
+            RemoveCredits(ValueDictionarys.valueDictionary["Dam"].cost);
         }
     }
 
     public void PlaceLeakyDam()
-    { 
-        if(SelectedCell.GetComponent<Cell>().FloodDefence != "Leaky Dam")
+    {
+        Cell cell = SelectedCell.GetComponent<Cell>();
+
+        if (!cell.FloodDefence.Equals("Leaky Dam"))
         {
             RefundCredits();
-            SelectedCell.GetComponent<Cell>().FloodDefence = "Leaky Dam";
-            RemoveCredits();
-            SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
+            cell.PlaceFloodDefence("Leaky Dam");
+            RemoveCredits(ValueDictionarys.valueDictionary["Leaky Dam"].cost);
         }
     }
 
     public void PlaceFloodWall()
     {
-        if(SelectedCell.GetComponent<Cell>().FloodDefence != "Flood Wall")
+        Cell cell = SelectedCell.GetComponent<Cell>();
+
+        if (!cell.FloodDefence.Equals("Flood Wall"))
         {
             RefundCredits();
-            SelectedCell.GetComponent<Cell>().FloodDefence = "Flood Wall";
-            RemoveCredits();
-            SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
+            cell.PlaceFloodDefence("Flood Wall");
+            RemoveCredits(ValueDictionarys.valueDictionary["Flood Wall"].cost);
         }
         
     }
 
     public void PlaceFPUA() //Flood proofing urban areas
     {
-        if (SelectedCell.GetComponent<Cell>().FloodDefence != "Flood proofing urban areas")
+        
+        Cell cell = SelectedCell.GetComponent<Cell>();
+
+        if (!cell.FloodDefence.Equals("Flood proofing urban areas"))
         {
             RefundCredits();
-            SelectedCell.GetComponent<Cell>().FloodDefence = "Flood proofing urban areas";
-            RemoveCredits();
-            SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
+            cell.PlaceFloodDefence("Flood proofing urban areas");
+            RemoveCredits(ValueDictionarys.valueDictionary["Flood proofing urban areas"].cost);
         }
     }
 
     public void RemoveDefence()
     {
-        if(SelectedCell.GetComponent<Cell>().FloodDefence != "Normal")
+        Cell cell = SelectedCell.GetComponent<Cell>();
+
+        if (!cell.FloodDefence.Equals("Normal"))
         {
             RefundCredits();
-            SelectedCell.GetComponent<Cell>().FloodDefence = "Normal";
-            SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
+            cell.PlaceFloodDefence("Normal");
         }
     }
 
-    private void RemoveCredits()
+    private void RemoveCredits(float credits)
     {
-        switch (SelectedCell.GetComponent<Cell>().FloodDefence)
-        {
-            case "Trees":
-                Credits.GetComponent<Credits>().RemoveCredits(1);
-                break;
-            case "Flood proofing urban areas":
-                Credits.GetComponent<Credits>().RemoveCredits(10);
-                break;
-            case "Flood Wall":
-                Credits.GetComponent<Credits>().RemoveCredits(20);
-                break;
-            case "Leaky Dam":
-                Credits.GetComponent<Credits>().RemoveCredits(10);
-                break;
-            case "Dam":
-                Credits.GetComponent<Credits>().RemoveCredits(100);
-                break;
-            case "Dredging":
-                Credits.GetComponent<Credits>().RemoveCredits(50);
-                break;
-        }
-
+        Credits.GetComponent<Credits>().RemoveCredits(credits);
         
     }
 
@@ -170,22 +161,27 @@ public class SelectCells : MonoBehaviour
         switch (SelectedCell.GetComponent<Cell>().FloodDefence)
         {
             case "Trees":
-                Credits.GetComponent<Credits>().AddCredits(1);
+                Credits.GetComponent<Credits>().AddCredits(ValueDictionarys.valueDictionary["Trees"].cost);
                 break;
+
             case "Flood proofing urban areas":
-                Credits.GetComponent<Credits>().AddCredits(10);
+                Credits.GetComponent<Credits>().AddCredits(ValueDictionarys.valueDictionary["Flood proofing urban areas"].cost);
                 break;
+
             case "Flood Wall":
-                Credits.GetComponent<Credits>().AddCredits(20);
+                Credits.GetComponent<Credits>().AddCredits(ValueDictionarys.valueDictionary["Flood Wall"].cost);
                 break;
+
             case "Leaky Dam":
-                Credits.GetComponent<Credits>().AddCredits(10);
+                Credits.GetComponent<Credits>().AddCredits(ValueDictionarys.valueDictionary["Leaky Dam"].cost);
                 break;
+
             case "Dam":
-                Credits.GetComponent<Credits>().AddCredits(100);
+                Credits.GetComponent<Credits>().AddCredits(ValueDictionarys.valueDictionary["Dam"].cost);
                 break;
+
             case "Dredging":
-                Credits.GetComponent<Credits>().AddCredits(50);
+                Credits.GetComponent<Credits>().AddCredits(ValueDictionarys.valueDictionary["Dredging"].cost);
                 break;
         }
     }
