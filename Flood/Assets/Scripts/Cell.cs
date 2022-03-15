@@ -39,6 +39,7 @@ public class Cell : MonoBehaviour {
         ChangeElevation(maxColourElevation);
         ChangeCellType(CellType.Hillslope);
         FloodDefence = "Normal";
+        elevation = 255;
     }
 
     private void Update()
@@ -57,57 +58,46 @@ public class Cell : MonoBehaviour {
 
     }
 
-    public void PlaceFloodDefence()
+    public void PlaceFloodDefence(string defence)
     {
+
+        ChangeCellType(cellType);   //Return the attenuation and capacity back to standard
+
+        if (!defence.Equals("Normal")) {
+            attenuation += ValueDictionarys.valueDictionary[defence].attenuation;
+            capacity += ValueDictionarys.valueDictionary[defence].capacity;
+        }
+
         switch (FloodDefence)
         {
             case "Trees":
-                attenuation = ValueDictionarys.valueDictionary["Trees"].attenuation;
-                capacity = ValueDictionarys.valueDictionary["Trees"].capacity;
                 ChangeColour(0, 51, 25);
                 break;
+
             case "Leaky Dam":
-                attenuation = ValueDictionarys.valueDictionary["Leaky Dam"].attenuation;
-                capacity = ValueDictionarys.valueDictionary["Leaky Dam"].capacity;
                 ChangeColour(160, 160, 160);
                 break;
+
             case "Dam":
-                attenuation = ValueDictionarys.valueDictionary["Dam"].attenuation;
-                capacity = ValueDictionarys.valueDictionary["Dam"].capacity;
                 ChangeColour(64, 64, 64);
                 break;
+
             case "Flood Wall":
-                attenuation = ValueDictionarys.valueDictionary["Flood Wall"].attenuation;
-                capacity = ValueDictionarys.valueDictionary["Flood Wall"].capacity;
                 ChangeColour(63, 0, 0);
                 break;
+
             case "Dredging":
-                attenuation = ValueDictionarys.valueDictionary["Dredging"].attenuation;
-                capacity = ValueDictionarys.valueDictionary["Dredging"].capacity;
                 ChangeColour(51, 25, 0);
                 break;
+
             case "Flood proofing urban areas":
                 ChangeColour(0, 255, 255);
                 break;
-            case "Normal":
-                if (cellType == CellType.Hillslope)
-                {
-                    attenuation = ValueDictionarys.valueDictionary["hillslope"].attenuation;
-                    capacity = ValueDictionarys.valueDictionary["hillslope"].capacity;
-                    ChangeElevation(elevation);
-                }
 
-                if (cellType == CellType.Channel)
-                {
-                    attenuation = ValueDictionarys.valueDictionary["channel"].attenuation;
-                    //capacity = ValueDictionarys.valueDictionary["channel"].capacity;
-                    ChangeColour(0, 0, 0);
-                }
-                if (cellType == CellType.Urban)
-                {
-                    ChangeColour(255, 0, 0);
-                }
+            default:
+                Debug.Log("Changed To Normal");
                 break;
+                
         }
     }
 
@@ -196,7 +186,7 @@ public class Cell : MonoBehaviour {
 
             case CellType.Hillslope:
                 cellType = CellType.Hillslope;
-                ChangeElevation(255);
+                ChangeElevation(elevation);
 
 
                 attenuation = ValueDictionarys.valueDictionary["hillslope"].attenuation;
@@ -414,15 +404,9 @@ public class Cell : MonoBehaviour {
     }
 
     public void ResetCell() {
-        FloodDefence = "Normal";
+        PlaceFloodDefence("Normal");
         waterLevel = 0;
         waterGainedThisCycle = 0;
-        ChangeElevation(elevation);
-        if (cellType == CellType.Channel) {
-            ChangeCellType(CellType.Channel);
-            attenuation = ValueDictionarys.valueDictionary["channel"].attenuation;
-            capacity = 0.01f * upstreamCells;   //HARDCODED VALUE
-        }
 
     }
 

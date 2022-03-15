@@ -65,9 +65,9 @@ public class SelectCells : MonoBehaviour
         if(!SelectedCell.GetComponent<Cell>().FloodDefence.Equals("Trees"))
         {
             RefundCredits();
-            SelectedCell.GetComponent<Cell>().FloodDefence = "Trees";
+            SelectedCell.GetComponent<Cell>().PlaceFloodDefence("Trees");
             RemoveCredits();
-            SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
+            
         }
     }
 
@@ -76,9 +76,9 @@ public class SelectCells : MonoBehaviour
         if(!SelectedCell.GetComponent<Cell>().FloodDefence.Equals("Dredging"))
         {
             RefundCredits();
-            SelectedCell.GetComponent<Cell>().FloodDefence = "Dredging";
+            SelectedCell.GetComponent<Cell>().PlaceFloodDefence("Dredging");
             RemoveCredits();
-            SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
+            
         }
     }
 
@@ -87,9 +87,8 @@ public class SelectCells : MonoBehaviour
         if(!SelectedCell.GetComponent<Cell>().FloodDefence.Equals("Dam"))
         {
             RefundCredits();
-            SelectedCell.GetComponent<Cell>().FloodDefence = "Dam";
+            SelectedCell.GetComponent<Cell>().PlaceFloodDefence("Dam");
             RemoveCredits();
-            SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
         }
     }
 
@@ -98,9 +97,8 @@ public class SelectCells : MonoBehaviour
         if(!SelectedCell.GetComponent<Cell>().FloodDefence.Equals("Leaky Dam"))
         {
             RefundCredits();
-            SelectedCell.GetComponent<Cell>().FloodDefence = "Leaky Dam";
+            SelectedCell.GetComponent<Cell>().PlaceFloodDefence("Leaky Dam");
             RemoveCredits();
-            SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
         }
     }
 
@@ -109,9 +107,8 @@ public class SelectCells : MonoBehaviour
         if(!SelectedCell.GetComponent<Cell>().FloodDefence.Equals("Flood Wall"))
         {
             RefundCredits();
-            SelectedCell.GetComponent<Cell>().FloodDefence = "Flood Wall";
+            SelectedCell.GetComponent<Cell>().PlaceFloodDefence("Flood Wall");
             RemoveCredits();
-            SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
         }
         
     }
@@ -121,9 +118,8 @@ public class SelectCells : MonoBehaviour
         if (!SelectedCell.GetComponent<Cell>().FloodDefence.Equals("Flood proofing urban areas"))
         {
             RefundCredits();
-            SelectedCell.GetComponent<Cell>().FloodDefence = "Flood proofing urban areas";
+            SelectedCell.GetComponent<Cell>().PlaceFloodDefence("Flood proofing urban areas");
             RemoveCredits();
-            SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
         }
     }
 
@@ -132,8 +128,7 @@ public class SelectCells : MonoBehaviour
         if(!SelectedCell.GetComponent<Cell>().FloodDefence.Equals("Normal"))
         {
             RefundCredits();
-            SelectedCell.GetComponent<Cell>().FloodDefence = "Normal";
-            SelectedCell.GetComponent<Cell>().PlaceFloodDefence();
+            SelectedCell.GetComponent<Cell>().PlaceFloodDefence("Normal");
         }
     }
 
