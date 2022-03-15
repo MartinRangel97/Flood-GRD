@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 
 
 
@@ -30,7 +30,7 @@ public class WorldManager : MonoBehaviour
 
     public GameObject Credits;
 
-    private bool autoSimulate = false;
+    private bool autoSimulate = true;
     private bool canSimulate = false;
     private int step = 0;
     private bool simFinished = false;
@@ -53,7 +53,7 @@ public class WorldManager : MonoBehaviour
             case Phase.MapEditor:
                 DrawWater();
                 DrawResidential();
-                CalculateSlopes();
+                //CalculateSlopes();
                 break;
 
             case Phase.DefenceSetup:
@@ -67,13 +67,9 @@ public class WorldManager : MonoBehaviour
                 break;
 
             case Phase.Simulation:
-                if (Input.GetKeyDown(KeyCode.S)) {
-                    autoSimulate = true;
-                }
                 if (canSimulate) {
                     if ((Input.GetKeyDown(KeyCode.Space) || autoSimulate) && !simFinished) {
                         StepThroughSimulation();
-                        
                     }
                 }
                 break;
@@ -87,21 +83,27 @@ public class WorldManager : MonoBehaviour
 
     }
 
-    private void ResetWorld() {
+    public void ResetWorld() {
         foreach (GameObject go in cells) {
 
             Cell script = go.GetComponent<Cell>();
             script.ResetCell();
         }
 
+        Credits.GetComponent<Text>().text = "1000";
         hasRained = false;
-        autoSimulate = false;
+        autoSimulate = true;
         PhaseManager.Reset(Phase.DefenceSetup);
         Debug.Log("RESET WORLD");
     }
 
-    private void CalculateSlopes() {
-        if (Input.GetKeyDown(KeyCode.P)) {
+    public void PauseWorld()
+    {
+        autoSimulate = !autoSimulate; 
+    }
+
+    public void CalculateSlopes() {
+        //if (Input.GetKeyDown(KeyCode.P)) {
             int runs = 0;
             //CalculateHillslopes(waterLocations);
 
@@ -125,8 +127,8 @@ public class WorldManager : MonoBehaviour
             CalculateWorldFlow();
 
 
-            PhaseManager.NextPhase();
-        }
+            //PhaseManager.NextPhase();
+        //}
     }
 
     public float ResidentialHealth() {
