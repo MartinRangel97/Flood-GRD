@@ -62,7 +62,7 @@ public class SelectCells : MonoBehaviour
 
     public void PlaceTrees()
     {
-        if(SelectedCell.GetComponent<Cell>().FloodDefence != "Trees")
+        if(!SelectedCell.GetComponent<Cell>().FloodDefence.Equals("Trees"))
         {
             RefundCredits();
             SelectedCell.GetComponent<Cell>().FloodDefence = "Trees";
@@ -73,7 +73,7 @@ public class SelectCells : MonoBehaviour
 
     public void PlaceDredging()
     {
-        if(SelectedCell.GetComponent<Cell>().FloodDefence != "Dredging")
+        if(!SelectedCell.GetComponent<Cell>().FloodDefence.Equals("Dredging"))
         {
             RefundCredits();
             SelectedCell.GetComponent<Cell>().FloodDefence = "Dredging";
@@ -84,7 +84,7 @@ public class SelectCells : MonoBehaviour
 
     public void PlaceDam()
     {
-        if(SelectedCell.GetComponent<Cell>().FloodDefence != "Dam")
+        if(!SelectedCell.GetComponent<Cell>().FloodDefence.Equals("Dam"))
         {
             RefundCredits();
             SelectedCell.GetComponent<Cell>().FloodDefence = "Dam";
@@ -95,7 +95,7 @@ public class SelectCells : MonoBehaviour
 
     public void PlaceLeakyDam()
     { 
-        if(SelectedCell.GetComponent<Cell>().FloodDefence != "Leaky Dam")
+        if(!SelectedCell.GetComponent<Cell>().FloodDefence.Equals("Leaky Dam"))
         {
             RefundCredits();
             SelectedCell.GetComponent<Cell>().FloodDefence = "Leaky Dam";
@@ -106,7 +106,7 @@ public class SelectCells : MonoBehaviour
 
     public void PlaceFloodWall()
     {
-        if(SelectedCell.GetComponent<Cell>().FloodDefence != "Flood Wall")
+        if(!SelectedCell.GetComponent<Cell>().FloodDefence.Equals("Flood Wall"))
         {
             RefundCredits();
             SelectedCell.GetComponent<Cell>().FloodDefence = "Flood Wall";
@@ -118,7 +118,7 @@ public class SelectCells : MonoBehaviour
 
     public void PlaceFPUA() //Flood proofing urban areas
     {
-        if (SelectedCell.GetComponent<Cell>().FloodDefence != "Flood proofing urban areas")
+        if (!SelectedCell.GetComponent<Cell>().FloodDefence.Equals("Flood proofing urban areas"))
         {
             RefundCredits();
             SelectedCell.GetComponent<Cell>().FloodDefence = "Flood proofing urban areas";
@@ -129,7 +129,7 @@ public class SelectCells : MonoBehaviour
 
     public void RemoveDefence()
     {
-        if(SelectedCell.GetComponent<Cell>().FloodDefence != "Normal")
+        if(!SelectedCell.GetComponent<Cell>().FloodDefence.Equals("Normal"))
         {
             RefundCredits();
             SelectedCell.GetComponent<Cell>().FloodDefence = "Normal";
