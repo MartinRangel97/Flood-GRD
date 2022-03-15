@@ -161,22 +161,27 @@ public class SelectCells : MonoBehaviour
         switch (SelectedCell.GetComponent<Cell>().FloodDefence)
         {
             case "Trees":
-                Credits.GetComponent<Credits>().AddCredits(1);
+                Credits.GetComponent<Credits>().AddCredits(ValueDictionarys.valueDictionary["Trees"].cost);
                 break;
+
             case "Flood proofing urban areas":
-                Credits.GetComponent<Credits>().AddCredits(10);
+                Credits.GetComponent<Credits>().AddCredits(ValueDictionarys.valueDictionary["Flood proofing urban areas"].cost);
                 break;
+
             case "Flood Wall":
-                Credits.GetComponent<Credits>().AddCredits(20);
+                Credits.GetComponent<Credits>().AddCredits(ValueDictionarys.valueDictionary["Flood Wall"].cost);
                 break;
+
             case "Leaky Dam":
-                Credits.GetComponent<Credits>().AddCredits(10);
+                Credits.GetComponent<Credits>().AddCredits(ValueDictionarys.valueDictionary["Leaky Dam"].cost);
                 break;
+
             case "Dam":
-                Credits.GetComponent<Credits>().AddCredits(100);
+                Credits.GetComponent<Credits>().AddCredits(ValueDictionarys.valueDictionary["Dam"].cost);
                 break;
+
             case "Dredging":
-                Credits.GetComponent<Credits>().AddCredits(50);
+                Credits.GetComponent<Credits>().AddCredits(ValueDictionarys.valueDictionary["Dredging"].cost);
                 break;
         }
     }
