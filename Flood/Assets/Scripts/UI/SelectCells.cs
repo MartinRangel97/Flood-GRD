@@ -11,6 +11,9 @@ public class SelectCells : MonoBehaviour
     public GameObject ContributingCells;
     public GameObject Credits;
 
+
+    public Transform FlowArrows;
+
     void Update()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -27,7 +30,7 @@ public class SelectCells : MonoBehaviour
             {
                 SelectedCell = hit.collider.gameObject;
 
-                CellInformation.transform.GetChild(1).GetChild(1).GetComponent<Text>().text = SelectedCell.GetComponent<Cell>().GetCellType().ToString();
+                CellInformation.transform.GetChild(1).GetChild(0).GetChild(1).GetComponent<Text>().text = SelectedCell.GetComponent<Cell>().GetCellType().ToString();
 
                 ContributingCells.GetComponent<Text>().text = SelectedCell.gameObject.GetComponent<Cell>().ContributingCells().ToString();
 
@@ -39,7 +42,7 @@ public class SelectCells : MonoBehaviour
                         ClearFlowArrows();
                         for(var i = 0; i < child.GetComponent<Cell>().GetFlow().Count; i++)
                         {
-                            CellInformation.transform.Find("Flow").Find("Cell").Find(child.GetComponent<Cell>().GetFlow()[i]).gameObject.SetActive(true);
+                            FlowArrows.Find(child.GetComponent<Cell>().GetFlow()[i]).gameObject.SetActive(true);
 
                         }
                     }
@@ -54,7 +57,7 @@ public class SelectCells : MonoBehaviour
 
     void ClearFlowArrows()
     {
-        foreach (Transform child in CellInformation.transform.Find("Flow").Find("Cell"))
+        foreach (Transform child in FlowArrows)
         {
             child.gameObject.SetActive(false);
         }
