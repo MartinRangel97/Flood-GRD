@@ -132,11 +132,13 @@ public class SelectCells : MonoBehaviour
     {
         
         Cell cell = SelectedCell.GetComponent<Cell>();
+        Residential residential = SelectedCell.GetComponent<Residential>();
 
         if (!cell.FloodDefence.Equals("Flood proofing urban areas"))
         {
             RefundCredits();
             cell.PlaceFloodDefence("Flood proofing urban areas");
+            residential.IsFloodProofed = true;
             RemoveCredits(ValueDictionarys.valueDictionary["Flood proofing urban areas"].cost);
         }
     }
