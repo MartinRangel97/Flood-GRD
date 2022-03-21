@@ -35,6 +35,9 @@ public class WorldManager : MonoBehaviour
     private int step = 0;
     private bool simFinished = false;
 
+
+    
+
     private void Awake() {
         ValueDictionarys.SetupDictionarys();
     }
@@ -90,6 +93,11 @@ public class WorldManager : MonoBehaviour
             script.ResetCell();
         }
 
+        foreach (Vector2 resPos in ResidentialCells) {
+            Residential r = cells[(int)resPos.x, (int)resPos.y].GetComponent<Residential>();
+            r.Reset();
+        }
+
         Credits.GetComponent<Text>().text = "1000";
         hasRained = false;
         autoSimulate = true;
@@ -108,32 +116,28 @@ public class WorldManager : MonoBehaviour
     }
 
     public void CalculateSlopes() {
-        //if (Input.GetKeyDown(KeyCode.P)) {
-            int runs = 0;
-            //CalculateHillslopes(waterLocations);
 
-            List<(int, int)> path = waterLocations;
+        int runs = 0;
 
+        List<(int, int)> path = waterLocations;
 
 
-            // Calculates the elevation of each tile based on the path of the river
-            while (path.Count != 0) {
-                runs++;
-                path = CalculateHillslopes(path);   // THIS FUNCTION CAN BE RECURSIVE
-                //Debug.Log("Run: " + runs);
+
+        // Calculates the elevation of each tile based on the path of the river
+        while (path.Count != 0) {
+            runs++;
+            path = CalculateHillslopes(path);   // THIS FUNCTION CAN BE RECURSIVE
+            //Debug.Log("Run: " + runs);
+        }
+
+        //Resets the 'Activated' variable 
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                GetCellScript(x, y).Activation(false);
             }
-
-            //Resets the 'Activated' variable 
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
-                    GetCellScript(x, y).Activation(false);
-                }
-            }
-            CalculateWorldFlow();
-
-
-            //PhaseManager.NextPhase();
-        //}
+        }
+        CalculateWorldFlow();
+            
     }
 
     public float ResidentialHealth() {
@@ -244,13 +248,15 @@ public class WorldManager : MonoBehaviour
 
             GetCellScript((int)outletLocation.x, (int)outletLocation.y).waterLevel = 0f;
 
+            float damageThreshold = 5f; // THRESHOLD to determine whether a residential area takes damage
+
             foreach (Vector2 position in ResidentialCells) {
                 Cell c = GetCellScript((int)position.x, (int)position.y);
                 Residential r = c.gameObject.GetComponent<Residential>();
                 
-                if(r.Health > 0)
+                if(r.Health > 0 && c.GetWaterLevel() > damageThreshold)
                 {
-                    r.ReduceHealth(c.GetWaterLevel());
+                    r.ReduceHealth(c.GetWaterLevel() - damageThreshold);
                     //Credits.GetComponent<Credits>().RemoveCredits(c.GetWaterLevel());
                 }
             }
@@ -516,7 +522,7 @@ public class WorldManager : MonoBehaviour
         }
 
 
-        CalculateRiverCellElevationForFlow(outletLocation, 1);
+        CalculateRiverCellElevationForFlow2(outletLocation);
 
         foreach ((int, int) w in waterLocations)
         {
@@ -528,6 +534,108 @@ public class WorldManager : MonoBehaviour
         }
 
         canSimulate = true;
+
+    }
+
+    public List<Vector2> CalculateRiverCellElevationForFlow2(Vector2 cell) {
+
+        Debug.Log("Cell: " + cell);
+        
+
+
+        List<Vector2> temp = GetNeighbours(cell);
+        List<Vector2> neighbours = new List<Vector2>();
+        List<Vector2> upstreamCells = new List<Vector2>();
+        List<Vector2> directUpstream = new List<Vector2>();
+        
+        
+        foreach (Vector2 n in temp) {
+            if (GetCellScript((int)n.x, (int)n.y).GetCellType() == CellType.Channel) {
+                neighbours.Add(n);
+            }
+        }
+
+        List<Vector2> straight = new List<Vector2>();
+        List<Vector2> diagonal = new List<Vector2>();
+
+        foreach (Vector2 n in neighbours) {
+            if (Mathf.Abs(cell.x - n.x) == 1 && Mathf.Abs(cell.y - n.y) == 1) {
+                diagonal.Add(n);
+            } else {
+                straight.Add(n);
+            }
+        }
+
+        neighbours.Clear();
+        neighbours.AddRange(straight);
+        neighbours.AddRange(diagonal);
+
+
+        foreach (Vector2 n in neighbours) {
+            if (AddSelfToList(cell, n)) {
+
+                Debug.Log(n + " added " + cell);
+                
+                directUpstream.Add(n);
+            }
+        }
+
+        Debug.Log("-------------------");
+
+
+
+        upstreamCells.AddRange(directUpstream);
+        foreach (Vector2 n in directUpstream) {
+            List<Vector2> added = new List<Vector2>();
+            
+            if (GetCellScript((int)n.x, (int)n.y).upstreamCellPositions.Count > 0) {
+                added.AddRange(GetCellScript((int)n.x, (int)n.y).upstreamCellPositions);
+            } else {
+                added = CalculateRiverCellElevationForFlow2(n);
+            }
+
+            upstreamCells.AddRange(added);
+            
+        }
+        
+
+        upstreamCells = RemoveDuplicates(upstreamCells);
+
+        GetCellScript((int)cell.x, (int)cell.y).upstreamCells = upstreamCells.Count;
+        GetCellScript((int)cell.x, (int)cell.y).upstreamCellPositions = upstreamCells;
+        
+
+
+
+
+        return upstreamCells;
+
+        
+    }
+
+    private List<Vector2> RemoveDuplicates(List<Vector2> originalList) {
+        List<Vector2> noDuplicates = new List<Vector2>();
+
+        foreach (Vector2 v in originalList) {
+            if (!noDuplicates.Contains(v)) {
+                noDuplicates.Add(v);
+            }
+        }
+
+        return noDuplicates;
+
+    }
+
+    private bool AddSelfToList(Vector2 cellVector, Vector2 neighbourVector) {
+        Cell cell = GetCellScript((int)cellVector.x, (int)cellVector.y);
+        Cell neighbour = GetCellScript((int)neighbourVector.x, (int)neighbourVector.y);
+
+        if (neighbour.GetFlowList().Contains(cell.gameObject) || cell.GetFlowList().Contains(neighbour.gameObject)) {
+            return false;
+        }
+
+        neighbour.SetFlowList(cell.gameObject);
+        return true;
 
     }
 
@@ -552,6 +660,10 @@ public class WorldManager : MonoBehaviour
 
         c.ChangeElevation(elevation);
         c.flowElevation = elevation;
+
+        int tempUpstream = 0;
+
+
         foreach (Vector2 n in neighbours)
         {
             Cell cellScript = GetCellScript((int)n.x, (int)n.y);
@@ -561,19 +673,32 @@ public class WorldManager : MonoBehaviour
                 cellScript.ChangeElevation(elevation + 1);
                 unsetNeighbours.Add(n);
                 cellScript.SetFlowList(cells[(int)cell.x, (int)cell.y]);
+
+            }else if (cellScript.GetElevation() == elevation + 1) {
+
+
+                cellScript.SetFlowList(cells[(int)cell.x, (int)cell.y]);
+                c.upstreamCells += cellScript.upstreamCells + 1;
+                tempUpstream += cellScript.upstreamCells + 1;
+
+            }else if (cellScript.GetElevation() == elevation) {
+                c.upstreamCells += cellScript.upstreamCells + 1;
+                tempUpstream += cellScript.upstreamCells + 1;
             }
         }
 
-
+        
         foreach (Vector2 n in unsetNeighbours)
         {
             c.upstreamCells += CalculateRiverCellElevationForFlow(n, elevation + 1);
             c.upstreamCells++;
+
         }
 
         Debug.Log("elevation: " + elevation + " upstreamCells: " + c.upstreamCells);
 
-        return c.upstreamCells;
+
+        return c.upstreamCells - tempUpstream;
 
     }
 
