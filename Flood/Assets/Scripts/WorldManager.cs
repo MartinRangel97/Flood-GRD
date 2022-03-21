@@ -35,6 +35,9 @@ public class WorldManager : MonoBehaviour
     private int step = 0;
     private bool simFinished = false;
 
+
+    
+
     private void Awake() {
         ValueDictionarys.SetupDictionarys();
     }
@@ -504,7 +507,7 @@ public class WorldManager : MonoBehaviour
         }
 
 
-        CalculateRiverCellElevationForFlow2(outletLocation, 1);
+        CalculateRiverCellElevationForFlow2(outletLocation);
 
         foreach ((int, int) w in waterLocations)
         {
@@ -519,11 +522,17 @@ public class WorldManager : MonoBehaviour
 
     }
 
-    public int CalculateRiverCellElevationForFlow2(Vector2 cell, int elevation) {
+    public List<Vector2> CalculateRiverCellElevationForFlow2(Vector2 cell) {
+
+        Debug.Log("Cell: " + cell);
+        
+
 
         List<Vector2> temp = GetNeighbours(cell);
         List<Vector2> neighbours = new List<Vector2>();
-        List<Vector2> unsetNeighbours = new List<Vector2>();
+        List<Vector2> upstreamCells = new List<Vector2>();
+        List<Vector2> directUpstream = new List<Vector2>();
+        
         
         foreach (Vector2 n in temp) {
             if (GetCellScript((int)n.x, (int)n.y).GetCellType() == CellType.Channel) {
@@ -547,24 +556,59 @@ public class WorldManager : MonoBehaviour
         neighbours.AddRange(diagonal);
 
 
-        bool hasAddedSelf = false;
         foreach (Vector2 n in neighbours) {
             if (AddSelfToList(cell, n)) {
-                hasAddedSelf = true;
-            } 
-                
-        }
 
-        if (hasAddedSelf) {
-            foreach (Vector2 n in neighbours) {
-                CalculateRiverCellElevationForFlow2(n, elevation + 1);
+                Debug.Log(n + " added " + cell);
+                
+                directUpstream.Add(n);
             }
         }
+
+        Debug.Log("-------------------");
+
+
+
+        upstreamCells.AddRange(directUpstream);
+        foreach (Vector2 n in directUpstream) {
+            List<Vector2> added = new List<Vector2>();
+            
+            if (GetCellScript((int)n.x, (int)n.y).upstreamCellPositions.Count > 0) {
+                added.AddRange(GetCellScript((int)n.x, (int)n.y).upstreamCellPositions);
+            } else {
+                added = CalculateRiverCellElevationForFlow2(n);
+            }
+
+            upstreamCells.AddRange(added);
+            
+        }
+        
+
+        upstreamCells = RemoveDuplicates(upstreamCells);
+
+        GetCellScript((int)cell.x, (int)cell.y).upstreamCells = upstreamCells.Count;
+        GetCellScript((int)cell.x, (int)cell.y).upstreamCellPositions = upstreamCells;
         
 
 
 
-        return 1;
+
+        return upstreamCells;
+
+        
+    }
+
+    private List<Vector2> RemoveDuplicates(List<Vector2> originalList) {
+        List<Vector2> noDuplicates = new List<Vector2>();
+
+        foreach (Vector2 v in originalList) {
+            if (!noDuplicates.Contains(v)) {
+                noDuplicates.Add(v);
+            }
+        }
+
+        return noDuplicates;
+
     }
 
     private bool AddSelfToList(Vector2 cellVector, Vector2 neighbourVector) {

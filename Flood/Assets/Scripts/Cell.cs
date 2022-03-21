@@ -34,6 +34,9 @@ public class Cell : MonoBehaviour {
     private bool isActivated = false;   //Is used when calculating elevation of each tile
     public bool isSelected = false;
 
+
+    public List<Vector2> upstreamCellPositions = new List<Vector2>();
+
     private void Start() {
         _sr = GetComponent<SpriteRenderer>();
         ChangeElevation(maxColourElevation);
