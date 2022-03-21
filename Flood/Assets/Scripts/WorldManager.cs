@@ -35,7 +35,7 @@ public class WorldManager : MonoBehaviour
     private int step = 0;
     private bool simFinished = false;
 
-
+    private List<Cell> cellScripts = new List<Cell>();
     
 
     private void Awake() {
@@ -75,6 +75,11 @@ public class WorldManager : MonoBehaviour
                         StepThroughSimulation();
                     }
                 }
+
+                if (CheckForEndState()) {
+                    simFinished = true;
+                    // DO THE END GAME STUFF
+                }
                 break;
 
 
@@ -84,6 +89,19 @@ public class WorldManager : MonoBehaviour
             ResetWorld();
         }
 
+    }
+
+    public bool CheckForEndState() {
+        
+        foreach (Cell c in cellScripts) {
+
+            if (c.waterLevel > 0) {
+                return false;
+            }
+
+        }
+
+        return true;
     }
 
     public void ResetWorld() {
@@ -101,6 +119,8 @@ public class WorldManager : MonoBehaviour
         Credits.GetComponent<Text>().text = "1000";
         hasRained = false;
         autoSimulate = true;
+        simFinished = false;
+        step = 0;
         PhaseManager.Reset(Phase.DefenceSetup);
         Debug.Log("RESET WORLD");
     }
@@ -303,6 +323,7 @@ public class WorldManager : MonoBehaviour
                 cells[x, y] = go;
                 go.name = "Cell_" + x + "_" + y;
                 go.transform.parent = cache;
+                cellScripts.Add(go.GetComponent<Cell>());
             }
         }
 
