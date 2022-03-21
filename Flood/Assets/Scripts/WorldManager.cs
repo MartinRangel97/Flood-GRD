@@ -93,6 +93,11 @@ public class WorldManager : MonoBehaviour
             script.ResetCell();
         }
 
+        foreach (Vector2 resPos in ResidentialCells) {
+            Residential r = cells[(int)resPos.x, (int)resPos.y].GetComponent<Residential>();
+            r.Reset();
+        }
+
         Credits.GetComponent<Text>().text = "1000";
         hasRained = false;
         autoSimulate = true;
@@ -238,13 +243,15 @@ public class WorldManager : MonoBehaviour
 
             GetCellScript((int)outletLocation.x, (int)outletLocation.y).waterLevel = 0f;
 
+            float damageThreshold = 5f; // THRESHOLD to determine whether a residential area takes damage
+
             foreach (Vector2 position in ResidentialCells) {
                 Cell c = GetCellScript((int)position.x, (int)position.y);
                 Residential r = c.gameObject.GetComponent<Residential>();
                 
-                if(r.Health > 0)
+                if(r.Health > 0 && c.GetWaterLevel() > damageThreshold)
                 {
-                    r.ReduceHealth(c.GetWaterLevel());
+                    r.ReduceHealth(c.GetWaterLevel() - damageThreshold);
                     //Credits.GetComponent<Credits>().RemoveCredits(c.GetWaterLevel());
                 }
             }
