@@ -241,9 +241,12 @@ public class WorldManager : MonoBehaviour
             foreach (Vector2 position in ResidentialCells) {
                 Cell c = GetCellScript((int)position.x, (int)position.y);
                 Residential r = c.gameObject.GetComponent<Residential>();
-
-                r.ReduceHealth(c.GetWaterLevel());
-                Credits.GetComponent<Credits>().RemoveCredits(c.GetWaterLevel());
+                
+                if(r.Health > 0)
+                {
+                    r.ReduceHealth(c.GetWaterLevel());
+                    //Credits.GetComponent<Credits>().RemoveCredits(c.GetWaterLevel());
+                }
             }
 
             canSimulate = false;

@@ -16,6 +16,7 @@ public class ValueDictionarys
         valueDictionary.Add("Trees", new CellData(0.2f, 0f, 1));
         valueDictionary.Add("Flood Wall", new CellData(0f, 2f, 20));
         valueDictionary.Add("Dredging", new CellData(0f, 2f, 50));
+        valueDictionary.Add("Flood proofing urban areas", new CellData(0, 0, 10));
     }
 
 }
