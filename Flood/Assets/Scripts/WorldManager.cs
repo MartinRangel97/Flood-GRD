@@ -110,6 +110,11 @@ public class WorldManager : MonoBehaviour
         autoSimulate = !autoSimulate; 
     }
 
+    public void StartWorld()
+    {
+        autoSimulate = true;
+    }
+
     public void CalculateSlopes() {
 
         int runs = 0;
