@@ -90,6 +90,11 @@ public class WorldManager : MonoBehaviour
             script.ResetCell();
         }
 
+        foreach (Vector2 resPos in ResidentialCells) {
+            Residential r = cells[(int)resPos.x, (int)resPos.y].GetComponent<Residential>();
+            r.Reset();
+        }
+
         Credits.GetComponent<Text>().text = "1000";
         hasRained = false;
         autoSimulate = true;

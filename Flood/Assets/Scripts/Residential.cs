@@ -40,6 +40,11 @@ public class Residential : MonoBehaviour {
         }
     }
 
+    public void Reset() {
+        Health = 100f;
+        IsFloodProofed = false;
+    }
+
     public void RemoveResidential() {
         Destroy(this);
     }
