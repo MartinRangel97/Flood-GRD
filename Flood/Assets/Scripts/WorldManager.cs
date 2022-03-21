@@ -239,13 +239,15 @@ public class WorldManager : MonoBehaviour
 
             GetCellScript((int)outletLocation.x, (int)outletLocation.y).waterLevel = 0f;
 
+            float damageThreshold = 5f; // THRESHOLD to determine whether a residential area takes damage
+
             foreach (Vector2 position in ResidentialCells) {
                 Cell c = GetCellScript((int)position.x, (int)position.y);
                 Residential r = c.gameObject.GetComponent<Residential>();
                 
-                if(r.Health > 0)
+                if(r.Health > 0 && c.GetWaterLevel() > damageThreshold)
                 {
-                    r.ReduceHealth(c.GetWaterLevel());
+                    r.ReduceHealth(c.GetWaterLevel() - damageThreshold);
                     //Credits.GetComponent<Credits>().RemoveCredits(c.GetWaterLevel());
                 }
             }
