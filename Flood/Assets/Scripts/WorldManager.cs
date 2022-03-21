@@ -102,6 +102,11 @@ public class WorldManager : MonoBehaviour
         autoSimulate = !autoSimulate; 
     }
 
+    public void StartWorld()
+    {
+        autoSimulate = true;
+    }
+
     public void CalculateSlopes() {
         //if (Input.GetKeyDown(KeyCode.P)) {
             int runs = 0;
