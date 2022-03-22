@@ -196,7 +196,7 @@ public class WorldManager : MonoBehaviour
     private void StepThroughSimulation() {
         StartCoroutine(Co_StepThroughSimulation(timeBetweenSteps));
         step++;
-        Debug.Log("Step: " + step);
+        //Debug.Log("Step: " + step);
     }
 
     private IEnumerator Co_StepThroughSimulation(float waitTimeSeconds) {
@@ -208,10 +208,7 @@ public class WorldManager : MonoBehaviour
                 GetCellScript(x, y).SetWaterLevel(1);
                 //GetCellScript(x, y).ChangeColour(0, 0, 255 - 10);
             }
-
             hasRained = true;
-
-
 
         } else {
             float waterPerTile = 0;
@@ -228,12 +225,9 @@ public class WorldManager : MonoBehaviour
 
                 float waterLevel = GetCellScript(x, y).GetWaterLevel();
                 if (curFlowList.Count > 0) {
-
-
+                    
                     //Calculation
                     waterPerTile = waterLevel * (1 - GetCellScript(x, y).attenuation) / curFlowList.Count;
-
-
 
                     foreach (GameObject c in curFlowList) {
                         c.GetComponent<Cell>().waterGainedThisCycle += waterPerTile;
@@ -241,9 +235,15 @@ public class WorldManager : MonoBehaviour
                     }
 
                 }
+
+                if (GetCellScript(x, y).GetCellType() == CellType.Channel) {
+                    GetCellScript(x, y).UpdateWaterGraphic();
+                }
             }
 
             ApplyWaterLevelChanges();
+
+
 
             // Calculate Flooding values
 
@@ -560,7 +560,6 @@ public class WorldManager : MonoBehaviour
 
     public List<Vector2> CalculateRiverCellElevationForFlow2(Vector2 cell) {
 
-        Debug.Log("Cell: " + cell);
         
 
 
@@ -595,13 +594,11 @@ public class WorldManager : MonoBehaviour
         foreach (Vector2 n in neighbours) {
             if (AddSelfToList(cell, n)) {
 
-                Debug.Log(n + " added " + cell);
                 
                 directUpstream.Add(n);
             }
         }
 
-        Debug.Log("-------------------");
 
 
 

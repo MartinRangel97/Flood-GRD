@@ -28,6 +28,9 @@ public class PhaseManager : MonoBehaviour {
                 instance.currentPhase = Phase.Simulation;
                 break;
 
+            case Phase.Simulation:
+                break;
+
             default:
                 Debug.Log("Nah, doesnt work like that");
                 break;

@@ -35,6 +35,7 @@ public class Cell : MonoBehaviour {
     public bool isSelected = false;
 
 
+
     public List<Vector2> upstreamCellPositions = new List<Vector2>();
 
     private void Start() {
@@ -58,6 +59,8 @@ public class Cell : MonoBehaviour {
 
 
         ChangeCellColourWithWater();    //Called every frame (Needs to be changed)
+
+        
 
     }
 
@@ -187,6 +190,8 @@ public class Cell : MonoBehaviour {
                 attenuation = ValueDictionarys.valueDictionary["channel"].attenuation;
                 capacity = 0.01f * upstreamCells; // HARDCODED VALUE
 
+                GetComponent<SpriteRenderer>().sprite = Sprites.instance.GetRandomWaterSprite();
+
                 return true;
 
             case CellType.Hillslope:
@@ -196,8 +201,8 @@ public class Cell : MonoBehaviour {
                 } else {
                     ChangeElevation(elevation);
                 }
-                
-                
+
+                GetComponent<SpriteRenderer>().sprite = Sprites.instance.GetGrassSprite();
 
 
                 attenuation = ValueDictionarys.valueDictionary["hillslope"].attenuation;
@@ -420,5 +425,36 @@ public class Cell : MonoBehaviour {
         waterGainedThisCycle = 0;
 
     }
+
+    public void UpdateWaterGraphic() {
+
+        if (_sr.sprite == Sprites.instance.Waters[1]) {
+            foreach (GameObject downstream in flowsTo) {
+                SpriteRenderer dsSR = downstream.GetComponent<SpriteRenderer>();
+                if (dsSR.sprite == Sprites.instance.Waters[1]) {
+                    dsSR.sprite = Sprites.instance.Waters[0];
+                } else {
+                    dsSR.sprite = Sprites.instance.Waters[1];
+                }
+                
+                
+            }
+
+            _sr.sprite = Sprites.instance.Waters[0];
+        } else {
+
+
+            if (Random.Range(0, 10) == 1) {
+                _sr.sprite = Sprites.instance.Waters[1];
+            }
+        }
+
+
+    }
+        
+        
+
+    
+
 
 }
