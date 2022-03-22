@@ -33,7 +33,7 @@ public class WorldManager : MonoBehaviour
     private bool autoSimulate = true;
     private bool canSimulate = false;
     private int step = 0;
-    private bool simFinished = false;
+    public bool simFinished = false;
 
     private List<Cell> cellScripts = new List<Cell>();
     

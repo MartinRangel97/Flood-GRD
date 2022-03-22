@@ -2,10 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-public class GameOver : MonoBehaviour
+using TMPro;
+public class WinLoss : MonoBehaviour
 {
     public GameObject Credits;
     public GameObject GameOverUI;
+    public GameObject WinUI;
+    public GameObject WinMessage;
     public GameObject ManagerObject;
 
     // Start is called before the first frame update
@@ -17,6 +20,7 @@ public class GameOver : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Win();
         gameOver();
     }
 
@@ -26,6 +30,16 @@ public class GameOver : MonoBehaviour
         if (money <= 0)
         {
             GameOverUI.SetActive(true);
+            Time.timeScale = 0;
+        }
+    }
+
+    private void Win()
+    {
+        if (ManagerObject.GetComponent<WorldManager>().simFinished)
+        {
+            
+            WinUI.SetActive(true);
             Time.timeScale = 0;
         }
     }
