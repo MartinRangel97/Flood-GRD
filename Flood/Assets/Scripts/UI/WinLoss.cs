@@ -7,45 +7,72 @@ public class WinLoss : MonoBehaviour
 {
     public GameObject Credits;
     public GameObject GameOverUI;
-    public GameObject WinUI;
-    public GameObject WinMessage;
     public GameObject ManagerObject;
+    public GameObject Stars;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    private bool GameIsOver;
+    private bool DidPlayerWin;
 
     // Update is called once per frame
     void Update()
     {
-        Win();
-        gameOver();
+        checkIfPlayerWon();
     }
 
-    private void gameOver()
+    private void checkIfPlayerWon()
     {
-        float money = float.Parse(Credits.GetComponent<Text>().text);
-        if (money <= 0)
+        float money = Credits.GetComponent<Credits>().CurrentCreds;
+        if(GameIsOver == false)
+        {
+            if (money <= 0)
+            {
+                GameIsOver = true;
+                DidPlayerWin = false;
+                StartCoroutine("GameFinished");
+            }
+            if (ManagerObject.GetComponent<WorldManager>().simFinished)
+            {
+                GameIsOver = true;
+                DidPlayerWin = true;
+                StartCoroutine("GameFinished");
+            }
+        }
+    }
+    
+    private IEnumerator GameFinished()
+    {
+        Debug.Log("Check");
+
+        yield return new WaitForSeconds(5f);
+        float money = Credits.GetComponent<Credits>().CurrentCreds;
+        if (!DidPlayerWin) //Lose Game Screen
         {
             GameOverUI.SetActive(true);
+            GameOverUI.transform.Find("Title").GetComponent<TextMeshProUGUI>().text = "Level Failed!";
+            GameOverUI.transform.Find("Message").GetComponent<TextMeshProUGUI>().text = "You ran out of credits";
+            Time.timeScale = 0;
+        }
+        else //Win Game Screen
+        {
+            GameOverUI.SetActive(true);
+            GameOverUI.transform.Find("Title").GetComponent<TextMeshProUGUI>().text = "Level Cleared!";
+            GameOverUI.transform.Find("Message").GetComponent<TextMeshProUGUI>().text = "You have " + money.ToString() + " credits remaining";
+            ShowRank(Credits.GetComponent<Credits>().CalculateRank());
             Time.timeScale = 0;
         }
     }
 
-    private void Win()
+    private void ShowRank(int stars)
     {
-        if (ManagerObject.GetComponent<WorldManager>().simFinished)
+        for(var i = 0; i < stars; i++)
         {
-            
-            WinUI.SetActive(true);
-            Time.timeScale = 0;
+            Stars.transform.GetChild(i).GetChild(0).gameObject.SetActive(true);
         }
     }
 
     public void ResetGame()
     {
+        GameIsOver = false;
         Time.timeScale = 1;
     }
 }
