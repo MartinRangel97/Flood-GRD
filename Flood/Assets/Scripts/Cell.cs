@@ -37,12 +37,15 @@ public class Cell : MonoBehaviour {
 
     public List<Vector2> upstreamCellPositions = new List<Vector2>();
 
+    private void Awake() {
+        
+    }
+
     private void Start() {
         _sr = GetComponent<SpriteRenderer>();
-        ChangeElevation(maxColourElevation);
+        ChangeElevation(255);
         ChangeCellType(CellType.Hillslope);
         FloodDefence = "Normal";
-        elevation = 255;
     }
 
     private void Update()
