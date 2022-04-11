@@ -35,7 +35,7 @@ public class HillslopeChannel : MonoBehaviour
                 break;
             case "Urban":
                 ResetFloodDefences();
-                FloodDefences.Find("Flood proofing urban areas").gameObject.SetActive(true);
+                FloodDefences.Find("Flood Proofing Urban Areas").gameObject.SetActive(true);
                 ContributingCells.SetActive(false);
                 break;
             default:
