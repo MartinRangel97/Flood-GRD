@@ -10,6 +10,7 @@ public class SelectCells : MonoBehaviour
     public GameObject DefenceType;
     public GameObject ContributingCells;
     public GameObject Credits;
+    public GameObject CellType;
 
 
     public Transform FlowArrows;
@@ -30,7 +31,7 @@ public class SelectCells : MonoBehaviour
             {
                 SelectedCell = hit.collider.gameObject;
 
-                CellInformation.transform.GetChild(1).GetChild(0).GetChild(1).GetComponent<Text>().text = SelectedCell.GetComponent<Cell>().GetCellType().ToString();
+                CellType.GetComponent<Text>().text = SelectedCell.GetComponent<Cell>().GetCellType().ToString();
 
                 ContributingCells.GetComponent<Text>().text = SelectedCell.gameObject.GetComponent<Cell>().ContributingCells().ToString();
 
