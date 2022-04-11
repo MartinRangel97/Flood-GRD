@@ -15,7 +15,7 @@ public class WorldManager : MonoBehaviour
     [Range(0.05f, 2f)]
     public float timeBetweenSteps = 1f;
 
-    private int width, height;
+    public int width, height;
     private int cellWidth = 1;
     private GameObject[,] cells;
     private bool hasRained = false;
@@ -26,7 +26,7 @@ public class WorldManager : MonoBehaviour
     public static int channelElevationValue = 3;
 
 
-    private List<Vector2> ResidentialCells = new List<Vector2>();
+    public List<Vector2> ResidentialCells = new List<Vector2>();
 
     public GameObject Credits;
 
@@ -54,6 +54,15 @@ public class WorldManager : MonoBehaviour
     {
         switch (PhaseManager.instance.currentPhase) {
             case Phase.MapEditor:
+                // TEMPORARY
+                if (Input.GetKeyDown(KeyCode.S)) {
+                    SaveWorld();
+                }
+
+                if (Input.GetKeyDown(KeyCode.L)) {
+                    LoadWorld();
+                }
+                
                 DrawWater();
                 DrawResidential();
                 //CalculateSlopes();
@@ -91,6 +100,22 @@ public class WorldManager : MonoBehaviour
 
     }
 
+    public void SaveWorld() {
+
+        SaveSystem.SaveWorld(this);
+
+    }
+
+    public void LoadWorld() {
+
+        WorldData data = SaveSystem.LoadWorld();
+        InitialiseWorldWithData(data);
+        Debug.Log("Load Complete");
+
+    }
+
+
+
     public bool CheckForEndState() {
         
         foreach (Cell c in cellScripts) {
@@ -103,6 +128,8 @@ public class WorldManager : MonoBehaviour
 
         return true;
     }
+
+
 
     public void ResetWorld() {
         foreach (GameObject go in cells) {
@@ -181,7 +208,7 @@ public class WorldManager : MonoBehaviour
                 return;
             }
 
-            Vector2 position = (Vector2)clickedCell.transform.position;
+            Vector2 position = clickedCell.transform.position;
             ResidentialCells.Add(position);
             cellScript.ChangeCellType(CellType.Urban);
             Residential residentialScript = clickedCell.AddComponent<Residential>();
@@ -268,7 +295,7 @@ public class WorldManager : MonoBehaviour
 
             GetCellScript((int)outletLocation.x, (int)outletLocation.y).waterLevel = 0f;
 
-            float damageThreshold = 5f; // THRESHOLD to determine whether a residential area takes damage
+            float damageThreshold = 3f; // THRESHOLD to determine whether a residential area takes damage
 
             foreach (Vector2 position in ResidentialCells) {
                 Cell c = GetCellScript((int)position.x, (int)position.y);
@@ -329,9 +356,71 @@ public class WorldManager : MonoBehaviour
 
     }
 
+    private void InitialiseWorldWithData(WorldData data) {
+
+        width = data.worldWidth;
+        height = data.worldHeight;
+
+        foreach (Cell cell in cellScripts) {
+            cell.ChangeCellType(CellType.Hillslope);
+            cell.isRiverEnd = false;
+            if (cell.gameObject.GetComponent<Residential>() != null) {
+                Destroy(cell.gameObject.GetComponent<Residential>()); 
+            }
+        }
+
+        waterLocations = new List<(int, int)>();
+        ResidentialCells = new List<Vector2>();
+
+        for (int i = 0; i < data.riverPositions.Length; i += 2) {
+            waterLocations.Add((data.riverPositions[i], data.riverPositions[i + 1]));
+
+
+            //Debug.Log("Water Location: " + data.riverPositions[i] + ", " + data.riverPositions[i + 1]);
+        }
+
+        foreach ((int, int) position in waterLocations) {
+            Cell c = cells[position.Item1, position.Item2].GetComponent<Cell>();
+
+
+            //Debug.Log("Water Location: " + position.Item1 + ", " + position.Item2);
+
+
+            c.ChangeCellType(CellType.Channel);
+            Debug.Log("Water Location: " + position.Item1 + ", " + position.Item2 + " TYPE: " + c.GetCellType());
+
+        }
+
+        GetCellScript(waterLocations[0].Item1, waterLocations[0].Item2).isRiverEnd = true;
+        outletLocation = new Vector2(waterLocations[0].Item1, waterLocations[0].Item2);
+
+        for (int i = 0; i < data.residentialPositions.Length; i += 2) {
+            ResidentialCells.Add(new Vector2(data.residentialPositions[i], data.residentialPositions[i + 1]));
+        }
+
+        foreach (Vector2 position in ResidentialCells) {
+
+            Cell c = GetCellScript(position.x, position.y);
+
+            c.ChangeCellType(CellType.Urban);
+            Residential residentialScript = cells[(int)position.x, (int)position.y].AddComponent<Residential>();
+            residentialScript.Setup(position);
+
+        }
+
+
+    }
+
     private Cell GetCellScript(int xIndex, int yIndex)
     {
         return cells[xIndex, yIndex].GetComponent<Cell>();
+    }
+
+    private Cell GetCellScript(float x, float y) {
+        int xPos = (int)x;
+        int yPos = (int)y;
+
+        return GetCellScript(xPos, yPos);
     }
 
     private void DrawWater()
@@ -801,7 +890,6 @@ public class WorldManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("No tile was clicked");
 
             return null;
         }
