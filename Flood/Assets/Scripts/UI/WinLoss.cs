@@ -73,6 +73,7 @@ public class WinLoss : MonoBehaviour
     public void ResetGame()
     {
         GameIsOver = false;
+        Credits.GetComponent<Credits>().ResetCreds();
         Time.timeScale = 1;
     }
 }

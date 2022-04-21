@@ -32,11 +32,11 @@ public class Credits : MonoBehaviour
     {
         int Stars = 0;
 
-        if (CurrentCreds > CurrentCreds * 0.5) //over 50%
+        if (CurrentCreds > StartingCreds * 0.5) //over 50%
         {
             Stars = 3;
         } 
-        else if(CurrentCreds > CurrentCreds * 0.25) //over 25%
+        else if(CurrentCreds > StartingCreds * 0.25) //over 25%
         {
             Stars = 2;
         } else
@@ -45,5 +45,10 @@ public class Credits : MonoBehaviour
         }
 
         return Stars;
+    }
+
+    public void ResetCreds()
+    {
+        CurrentCreds = StartingCreds;
     }
 }
