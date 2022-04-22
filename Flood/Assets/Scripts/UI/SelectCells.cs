@@ -74,7 +74,6 @@ public class SelectCells : MonoBehaviour
             RefundCredits();
             cell.PlaceFloodDefence("Trees");
             RemoveCredits(ValueDictionarys.valueDictionary["Trees"].cost);
-            
         }
     }
 
@@ -88,7 +87,6 @@ public class SelectCells : MonoBehaviour
             RefundCredits();
             cell.PlaceFloodDefence("Dredging");
             RemoveCredits(ValueDictionarys.valueDictionary["Dredging"].cost);
-            
         }
     }
 
@@ -158,7 +156,7 @@ public class SelectCells : MonoBehaviour
     private void RemoveCredits(float credits)
     {
         Credits.GetComponent<Credits>().RemoveCredits(credits);
-        
+        Credits.GetComponent<Credits>().FloodDefenceCreds(credits);
     }
 
     private void RefundCredits()

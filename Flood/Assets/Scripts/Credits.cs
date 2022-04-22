@@ -6,7 +6,7 @@ public class Credits : MonoBehaviour
 {
     public float StartingCreds;
     public float CurrentCreds;
-
+    public float SpentCreds;
     private void Start()
     {
         StartingCreds = 1000;
@@ -25,6 +25,7 @@ public class Credits : MonoBehaviour
     public void AddCredits(float amount)
     {
         CurrentCreds += amount;
+        SpentCreds -= amount;
         gameObject.GetComponent<Text>().text = CurrentCreds.ToString();
     }
 
@@ -39,7 +40,7 @@ public class Credits : MonoBehaviour
         else if(CurrentCreds > StartingCreds * 0.25) //over 25%
         {
             Stars = 2;
-        } else
+        } else if (CurrentCreds > 0)
         {
             Stars = 1;
         }
@@ -50,5 +51,10 @@ public class Credits : MonoBehaviour
     public void ResetCreds()
     {
         CurrentCreds = StartingCreds;
+    }
+
+   public void FloodDefenceCreds(float amount)
+    {
+        SpentCreds += amount;
     }
 }
