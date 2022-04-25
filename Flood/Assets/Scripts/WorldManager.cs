@@ -106,10 +106,12 @@ public class WorldManager : MonoBehaviour
 
     }
 
-    public void LoadWorld() {
+    public void LoadWorld(int level = 1) {
 
-        WorldData data = SaveSystem.LoadWorld();
+        WorldData data = SaveSystem.LoadWorld(level);
         InitialiseWorldWithData(data);
+        ResetWorld();
+        PhaseManager.GoToPhase(Phase.MapEditor);
         Debug.Log("Load Complete");
 
     }
@@ -387,7 +389,7 @@ public class WorldManager : MonoBehaviour
 
 
             c.ChangeCellType(CellType.Channel);
-            Debug.Log("Water Location: " + position.Item1 + ", " + position.Item2 + " TYPE: " + c.GetCellType());
+            //Debug.Log("Water Location: " + position.Item1 + ", " + position.Item2 + " TYPE: " + c.GetCellType());
 
         }
 

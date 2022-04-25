@@ -7,7 +7,8 @@ public static class SaveSystem {
     public static void SaveWorld (WorldManager world) {
 
         BinaryFormatter formatter = new BinaryFormatter();
-        string path = Application.persistentDataPath + "/world.wld";
+        //string path = Application.persistentDataPath + "/world.wld";
+        string path = Application.dataPath + "/world.wld";
         FileStream stream = new FileStream(path, FileMode.Create);
 
         WorldData data = new WorldData(world);
@@ -19,9 +20,15 @@ public static class SaveSystem {
 
     }
 
-    public static WorldData LoadWorld() {
+    public static WorldData LoadWorld(int level) {
 
-        string path = Application.persistentDataPath + "/world.wld";
+        //string path = Application.persistentDataPath + "/world.wld";
+        string path = Application.dataPath + "/world" + level.ToString() + ".wld";
+        Debug.Log(path);
+
+        path = path.Replace("/Flood_Data", "/Levels");
+
+
         if (File.Exists(path)) {
 
             BinaryFormatter formatter = new BinaryFormatter();
