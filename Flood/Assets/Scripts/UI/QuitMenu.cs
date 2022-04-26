@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class Menu : MonoBehaviour
+public class QuitMenu : MonoBehaviour
 {
     public GameObject menu;
     public SelectCells sc;
