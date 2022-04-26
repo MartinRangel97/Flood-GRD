@@ -38,5 +38,9 @@ public class PhaseManager : MonoBehaviour {
         instance.currentPhase = phase;
     }
 
+    public static void GoToPhase(Phase phase) {
+        instance.currentPhase = phase;
+    }
+
 
 }
