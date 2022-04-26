@@ -190,6 +190,8 @@ public class WorldManager : MonoBehaviour
 
     public void CalculateSlopes() {
 
+        Debug.Log("Calculating Slopes for Level " + this.level);
+
         int runs = 0;
 
         List<(int, int)> path = waterLocations;
@@ -249,7 +251,7 @@ public class WorldManager : MonoBehaviour
     private void StepThroughSimulation() {
         StartCoroutine(Co_StepThroughSimulation(timeBetweenSteps));
         step++;
-        Debug.Log("Step: " + step);
+        //Debug.Log("Step: " + step);
     }
 
     private IEnumerator Co_StepThroughSimulation(float waitTimeSeconds) {
@@ -391,6 +393,8 @@ public class WorldManager : MonoBehaviour
         foreach (Cell cell in cellScripts) {
             cell.ChangeCellType(CellType.Hillslope);
             cell.isRiverEnd = false;
+            cell.flowsTo = new List<GameObject>();
+            cell.upstreamCellPositions = new List<Vector2>();
             if (cell.gameObject.GetComponent<Residential>() != null) {
                 Destroy(cell.gameObject.GetComponent<Residential>()); 
             }
