@@ -49,6 +49,7 @@ public class WorldManager : MonoBehaviour
         height = 31;
         cells = new GameObject[width, height];
         InitialiseWorld();
+        SetLevel(1);
         //DrawRandomLake((15, 3));
     }
 
@@ -107,6 +108,10 @@ public class WorldManager : MonoBehaviour
 
     }
 
+    public void SetLevel(int level) {
+        this.level = level;
+    }
+
     public void SaveWorld() {
 
         SaveSystem.SaveWorld(this);
@@ -132,6 +137,7 @@ public class WorldManager : MonoBehaviour
 
     public void NextLevel() {
         level++;
+        PhaseManager.instance.currentPhase = Phase.DefenceSetup;
         LoadWorld(level);
     }
 
@@ -167,6 +173,7 @@ public class WorldManager : MonoBehaviour
         autoSimulate = true;
         simFinished = false;
         step = 0;
+        
         PhaseManager.Reset(Phase.DefenceSetup);
         Debug.Log("RESET WORLD");
     }
@@ -373,7 +380,6 @@ public class WorldManager : MonoBehaviour
             }
         }
 
-        level = 1;
 
     }
 
