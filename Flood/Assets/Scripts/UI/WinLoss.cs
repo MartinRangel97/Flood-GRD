@@ -17,9 +17,25 @@ public class WinLoss : MonoBehaviour
     private bool DidPlayerWin;
     private List<string[]> rowData = new List<string[]>();
 
+    public int UID;
+
     private void Start()
     {
         ReadLogResults();
+        try
+        {
+            if(rowData[rowData.Count - 1][0] != null)
+            {
+                rowData.Remove(rowData[rowData.Count - 1]);
+                UID = int.Parse(rowData[rowData.Count - 1][0]) + 1;
+                Debug.Log(UID.ToString());
+            }
+        }
+        catch
+        {
+            UID = 1;
+            Debug.Log(UID.ToString());
+        }
     }
 
     // Update is called once per frame
@@ -111,7 +127,7 @@ public class WinLoss : MonoBehaviour
         FileStream filePath = File.Open(Path.Combine(Application.dataPath, "Log.csv"), FileMode.OpenOrCreate);
         
         string[] rowDataTemp = new string[5];
-        rowDataTemp[0] = 1.ToString();
+        rowDataTemp[0] = UID.ToString();
         rowDataTemp[1] = Credits.CalculateRank().ToString();
         rowDataTemp[2] = Credits.StartingCreds.ToString();
         rowDataTemp[3] = Credits.SpentCreds.ToString();
