@@ -36,7 +36,9 @@ public class WorldManager : MonoBehaviour
     public bool simFinished = false;
 
     private List<Cell> cellScripts = new List<Cell>();
-    
+
+    public int level;
+
 
     private void Awake() {
         ValueDictionarys.SetupDictionarys();
@@ -85,6 +87,11 @@ public class WorldManager : MonoBehaviour
                     }
                 }
 
+                //TEMPORARY
+                if (Input.GetKeyDown(KeyCode.N)) {
+                    NextLevel();
+                }
+
                 if (CheckForEndState()) {
                     simFinished = true;
                     // DO THE END GAME STUFF
@@ -106,15 +113,27 @@ public class WorldManager : MonoBehaviour
 
     }
 
-    public void LoadWorld() {
+    public void LoadWorld(int level = 1) {
 
-        WorldData data = SaveSystem.LoadWorld();
+        WorldData data = SaveSystem.LoadWorld(level);
         InitialiseWorldWithData(data);
+        //ResetWorld();
+        //PhaseManager.GoToPhase(Phase.MapEditor);
+
+        Credits.GetComponent<Text>().text = "1000";
+        hasRained = false;
+        autoSimulate = true;
+        simFinished = false;
+        step = 0;
+
         Debug.Log("Load Complete");
 
     }
 
-
+    public void NextLevel() {
+        level++;
+        LoadWorld(level);
+    }
 
     public bool CheckForEndState() {
         
@@ -354,6 +373,8 @@ public class WorldManager : MonoBehaviour
             }
         }
 
+        level = 1;
+
     }
 
     private void InitialiseWorldWithData(WorldData data) {
@@ -387,7 +408,7 @@ public class WorldManager : MonoBehaviour
 
 
             c.ChangeCellType(CellType.Channel);
-            Debug.Log("Water Location: " + position.Item1 + ", " + position.Item2 + " TYPE: " + c.GetCellType());
+            //Debug.Log("Water Location: " + position.Item1 + ", " + position.Item2 + " TYPE: " + c.GetCellType());
 
         }
 
@@ -408,7 +429,7 @@ public class WorldManager : MonoBehaviour
 
         }
 
-
+        //CalculateSlopes();
     }
 
     private Cell GetCellScript(int xIndex, int yIndex)
