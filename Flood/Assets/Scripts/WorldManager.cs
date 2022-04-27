@@ -50,8 +50,15 @@ public class WorldManager : MonoBehaviour
         cells = new GameObject[width, height];
         InitialiseWorld();
         //SetLevel(1);
-        LoadWorld();
+        Debug.Log(level);
+        StartCoroutine("DelayLoadWorld");
         //DrawRandomLake((15, 3));
+    }
+
+    private IEnumerator DelayLoadWorld() //botch fix
+    {
+        yield return new WaitForSeconds(0.1f);
+        LoadWorld(level);
     }
 
     private void Update()

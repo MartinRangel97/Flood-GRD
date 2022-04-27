@@ -9,7 +9,7 @@ public class PhaseManager : MonoBehaviour {
     public Phase currentPhase;
     public static PhaseManager instance;
 
-    private void Start() {
+    private void Awake() {
         if (instance != null) {
             Destroy(this);
         } else {

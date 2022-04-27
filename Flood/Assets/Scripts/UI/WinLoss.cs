@@ -28,13 +28,13 @@ public class WinLoss : MonoBehaviour
             {
                 rowData.Remove(rowData[rowData.Count - 1]);
                 UID = int.Parse(rowData[rowData.Count - 1][0]) + 1;
-                Debug.Log(UID.ToString());
+               
             }
         }
         catch
         {
             UID = 1;
-            Debug.Log(UID.ToString());
+            
         }
     }
 
@@ -111,7 +111,7 @@ public class WinLoss : MonoBehaviour
         for(var i = 0; i < lines.Length; i++)
         {
             String[] lineData = lines[i].Split(',');
-            string[] rowDataTemp = new string[5];
+            string[] rowDataTemp = new string[6];
             for (var j = 0; j < lineData.Length; j++)
             {
                 rowDataTemp[j] = lineData[j];
@@ -126,7 +126,7 @@ public class WinLoss : MonoBehaviour
     {
         FileStream filePath = File.Open(Path.Combine(Application.dataPath, "Log.csv"), FileMode.OpenOrCreate);
         
-        string[] rowDataTemp = new string[5];
+        string[] rowDataTemp = new string[6];
         rowDataTemp[0] = UID.ToString();
         rowDataTemp[1] = WorldManager.level.ToString();
         rowDataTemp[2] = Credits.CalculateRank().ToString();

@@ -38,11 +38,11 @@ public class Cell : MonoBehaviour {
     public List<Vector2> upstreamCellPositions = new List<Vector2>();
 
     private void Awake() {
-        
+
+        _sr = GetComponent<SpriteRenderer>();
     }
 
     private void Start() {
-        _sr = GetComponent<SpriteRenderer>();
         ChangeElevation(255);
         ChangeCellType(CellType.Hillslope);
         FloodDefence = "Normal";
