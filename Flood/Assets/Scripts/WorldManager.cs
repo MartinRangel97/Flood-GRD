@@ -136,7 +136,7 @@ public class WorldManager : MonoBehaviour
         autoSimulate = true;
         simFinished = false;
         step = 0;
-        Credits.SetCredits(ResidentialCells.Count);
+        //Credits.SetCredits(ResidentialCells.Count);
 
         Debug.Log("Load Complete");
 
@@ -219,7 +219,7 @@ public class WorldManager : MonoBehaviour
             }
         }
         CalculateWorldFlow();
-            
+        Credits.SetCredits(ResidentialCells.Count);
     }
 
     public float ResidentialHealth() {
