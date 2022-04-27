@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 
 public class QuitMenu : MonoBehaviour
 {
@@ -30,5 +30,10 @@ public class QuitMenu : MonoBehaviour
                 sc.enabled = false;
             }
         }
+    }
+
+    public void BackToMenu()
+    {
+        SceneManager.LoadScene("Main Menu", LoadSceneMode.Single);
     }
 }

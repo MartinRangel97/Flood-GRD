@@ -37,7 +37,7 @@ public class WorldManager : MonoBehaviour
 
     private List<Cell> cellScripts = new List<Cell>();
 
-    public int level;
+    public static int level;
 
 
     private void Awake() {
@@ -49,7 +49,8 @@ public class WorldManager : MonoBehaviour
         height = 31;
         cells = new GameObject[width, height];
         InitialiseWorld();
-        SetLevel(1);
+        //SetLevel(1);
+        LoadWorld();
         //DrawRandomLake((15, 3));
     }
 
@@ -108,8 +109,8 @@ public class WorldManager : MonoBehaviour
 
     }
 
-    public void SetLevel(int level) {
-        this.level = level;
+    public static void SetLevel(int Level) {
+        level = Level;
     }
 
     public void SaveWorld() {
@@ -190,7 +191,7 @@ public class WorldManager : MonoBehaviour
 
     public void CalculateSlopes() {
 
-        Debug.Log("Calculating Slopes for Level " + this.level);
+        Debug.Log("Calculating Slopes for Level " + level);
 
         int runs = 0;
 
