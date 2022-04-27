@@ -24,7 +24,7 @@ public class WorldData {
             riverPositions[i * 2] = world.waterLocations[i].Item1;
             riverPositions[(i * 2) + 1] = world.waterLocations[i].Item2;
 
-            Debug.Log(world.waterLocations[i]);
+            //Debug.Log(world.waterLocations[i]);
 
         }
 

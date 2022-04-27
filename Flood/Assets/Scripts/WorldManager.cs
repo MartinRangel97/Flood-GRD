@@ -36,7 +36,9 @@ public class WorldManager : MonoBehaviour
     public bool simFinished = false;
 
     private List<Cell> cellScripts = new List<Cell>();
-    
+
+    public static int level;
+
 
     private void Awake() {
         ValueDictionarys.SetupDictionarys();
@@ -47,6 +49,8 @@ public class WorldManager : MonoBehaviour
         height = 31;
         cells = new GameObject[width, height];
         InitialiseWorld();
+        //SetLevel(1);
+        LoadWorld();
         //DrawRandomLake((15, 3));
     }
 
@@ -85,6 +89,11 @@ public class WorldManager : MonoBehaviour
                     }
                 }
 
+                //TEMPORARY
+                if (Input.GetKeyDown(KeyCode.N)) {
+                    NextLevel();
+                }
+
                 if (CheckForEndState()) {
                     simFinished = true;
                     // DO THE END GAME STUFF
@@ -100,21 +109,38 @@ public class WorldManager : MonoBehaviour
 
     }
 
+    public static void SetLevel(int Level) {
+        level = Level;
+    }
+
     public void SaveWorld() {
 
         SaveSystem.SaveWorld(this);
 
     }
 
-    public void LoadWorld() {
+    public void LoadWorld(int level = 1) {
 
-        WorldData data = SaveSystem.LoadWorld();
+        WorldData data = SaveSystem.LoadWorld(level);
         InitialiseWorldWithData(data);
+        //ResetWorld();
+        //PhaseManager.GoToPhase(Phase.MapEditor);
+
+        Credits.GetComponent<Text>().text = "1000";
+        hasRained = false;
+        autoSimulate = true;
+        simFinished = false;
+        step = 0;
+
         Debug.Log("Load Complete");
 
     }
 
-
+    public void NextLevel() {
+        level++;
+        PhaseManager.instance.currentPhase = Phase.DefenceSetup;
+        LoadWorld(level);
+    }
 
     public bool CheckForEndState() {
         
@@ -148,6 +174,7 @@ public class WorldManager : MonoBehaviour
         autoSimulate = true;
         simFinished = false;
         step = 0;
+        
         PhaseManager.Reset(Phase.DefenceSetup);
         Debug.Log("RESET WORLD");
     }
@@ -163,6 +190,8 @@ public class WorldManager : MonoBehaviour
     }
 
     public void CalculateSlopes() {
+
+        Debug.Log("Calculating Slopes for Level " + level);
 
         int runs = 0;
 
@@ -223,7 +252,7 @@ public class WorldManager : MonoBehaviour
     private void StepThroughSimulation() {
         StartCoroutine(Co_StepThroughSimulation(timeBetweenSteps));
         step++;
-        Debug.Log("Step: " + step);
+        //Debug.Log("Step: " + step);
     }
 
     private IEnumerator Co_StepThroughSimulation(float waitTimeSeconds) {
@@ -354,6 +383,7 @@ public class WorldManager : MonoBehaviour
             }
         }
 
+
     }
 
     private void InitialiseWorldWithData(WorldData data) {
@@ -364,6 +394,8 @@ public class WorldManager : MonoBehaviour
         foreach (Cell cell in cellScripts) {
             cell.ChangeCellType(CellType.Hillslope);
             cell.isRiverEnd = false;
+            cell.flowsTo = new List<GameObject>();
+            cell.upstreamCellPositions = new List<Vector2>();
             if (cell.gameObject.GetComponent<Residential>() != null) {
                 Destroy(cell.gameObject.GetComponent<Residential>()); 
             }
@@ -387,7 +419,7 @@ public class WorldManager : MonoBehaviour
 
 
             c.ChangeCellType(CellType.Channel);
-            Debug.Log("Water Location: " + position.Item1 + ", " + position.Item2 + " TYPE: " + c.GetCellType());
+            //Debug.Log("Water Location: " + position.Item1 + ", " + position.Item2 + " TYPE: " + c.GetCellType());
 
         }
 
@@ -408,7 +440,7 @@ public class WorldManager : MonoBehaviour
 
         }
 
-
+        //CalculateSlopes();
     }
 
     private Cell GetCellScript(int xIndex, int yIndex)
