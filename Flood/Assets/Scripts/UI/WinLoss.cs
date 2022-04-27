@@ -128,10 +128,11 @@ public class WinLoss : MonoBehaviour
         
         string[] rowDataTemp = new string[5];
         rowDataTemp[0] = UID.ToString();
-        rowDataTemp[1] = Credits.CalculateRank().ToString();
-        rowDataTemp[2] = Credits.StartingCreds.ToString();
-        rowDataTemp[3] = Credits.SpentCreds.ToString();
-        rowDataTemp[4] = Credits.CurrentCreds.ToString();
+        rowDataTemp[1] = WorldManager.level.ToString();
+        rowDataTemp[2] = Credits.CalculateRank().ToString();
+        rowDataTemp[3] = Credits.StartingCreds.ToString();
+        rowDataTemp[4] = Credits.SpentCreds.ToString();
+        rowDataTemp[5] = Credits.CurrentCreds.ToString();
         rowData.Add(rowDataTemp);
 
         Debug.Log(rowData.Count);
