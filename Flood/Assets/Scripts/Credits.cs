@@ -4,15 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 public class Credits : MonoBehaviour
 {
-    public float StartingCreds;
-    public float CurrentCreds;
+    public float StartingCreds = 1;
+    public float CurrentCreds = 1;
     public float SpentCreds;
-    private void Start()
-    {
-        StartingCreds = 1000;
-        CurrentCreds = StartingCreds;
-        gameObject.GetComponent<Text>().text = CurrentCreds.ToString();
-    }
 
     public void RemoveCredits(float amount)
     {
@@ -57,4 +51,12 @@ public class Credits : MonoBehaviour
     {
         SpentCreds += amount;
     }
+
+    public void SetCredits(int houses)
+    {
+        StartingCreds = houses * 100;
+        CurrentCreds = StartingCreds;
+        gameObject.GetComponent<Text>().text = CurrentCreds.ToString();
+    }
+    
 }

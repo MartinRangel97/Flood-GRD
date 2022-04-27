@@ -28,7 +28,7 @@ public class WorldManager : MonoBehaviour
 
     public List<Vector2> ResidentialCells = new List<Vector2>();
 
-    public GameObject Credits;
+    public Credits Credits;
 
     private bool autoSimulate = true;
     private bool canSimulate = false;
@@ -132,12 +132,11 @@ public class WorldManager : MonoBehaviour
         InitialiseWorldWithData(data);
         //ResetWorld();
         //PhaseManager.GoToPhase(Phase.MapEditor);
-
-        Credits.GetComponent<Text>().text = "1000";
         hasRained = false;
         autoSimulate = true;
         simFinished = false;
         step = 0;
+        Credits.SetCredits(ResidentialCells.Count);
 
         Debug.Log("Load Complete");
 
