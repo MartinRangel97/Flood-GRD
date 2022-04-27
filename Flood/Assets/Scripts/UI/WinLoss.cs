@@ -99,6 +99,11 @@ public class WinLoss : MonoBehaviour
     {
         GameIsOver = false;
         Credits.ResetCreds();
+
+        for (var i = 0; i < Credits.CalculateRank(); i++)
+        {
+            Stars.transform.GetChild(i).GetChild(0).gameObject.SetActive(false);
+        }
         Time.timeScale = 1;
     }
 
