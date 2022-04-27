@@ -394,6 +394,10 @@ public class WorldManager : MonoBehaviour
 
     private void InitialiseWorldWithData(WorldData data) {
 
+        if (data == null) {
+            return;
+        }
+
         width = data.worldWidth;
         height = data.worldHeight;
 
