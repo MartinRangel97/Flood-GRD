@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using UnityEngine.SceneManagement;
 
 public static class SaveSystem {
 
@@ -48,6 +49,8 @@ public static class SaveSystem {
 
         } else {
             Debug.LogError(path + " has no save!");
+            SceneManager.LoadScene("Main Menu");
+
             return null;
         }
     }
