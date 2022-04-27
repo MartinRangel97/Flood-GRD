@@ -175,7 +175,8 @@ public class WorldManager : MonoBehaviour
             r.Reset();
         }
 
-        Credits.GetComponent<Text>().text = "1000";
+        //Credits.GetComponent<Text>().text = Credits.CurrentCreds.ToString();
+        Credits.ResetCreds();
         hasRained = false;
         autoSimulate = true;
         simFinished = false;

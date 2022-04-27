@@ -45,6 +45,7 @@ public class Credits : MonoBehaviour
     public void ResetCreds()
     {
         CurrentCreds = StartingCreds;
+        gameObject.GetComponent<Text>().text = CurrentCreds.ToString();
     }
 
    public void FloodDefenceCreds(float amount)
