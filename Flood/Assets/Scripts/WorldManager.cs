@@ -45,13 +45,13 @@ public class WorldManager : MonoBehaviour
     }
 
     private void Start() {
-        width = 31;
-        height = 31;
+        width = 51;
+        height = 81;
         cells = new GameObject[width, height];
         InitialiseWorld();
         //SetLevel(1);
         Debug.Log(level);
-        StartCoroutine("DelayLoadWorld");
+        //StartCoroutine("DelayLoadWorld");
         //DrawRandomLake((15, 3));
     }
 
@@ -310,28 +310,32 @@ public class WorldManager : MonoBehaviour
 
             // Calculate Flooding values
 
-            foreach (GameObject cell in cells) {
-                x = (int)cell.transform.position.x;
-                y = (int)cell.transform.position.y;
-                Cell cellScript = GetCellScript(x, y);
+            for (int i = 0; i < 5; i++) {
+                foreach (GameObject cell in cells) {
+                    x = (int)cell.transform.position.x;
+                    y = (int)cell.transform.position.y;
+                    Cell cellScript = GetCellScript(x, y);
 
-                List<Vector2> neighbours = GetNeighbours(new Vector2(x, y));
+                    List<Vector2> neighbours = GetNeighbours(new Vector2(x, y));
 
-                if (cellScript.waterLevel > cellScript.capacity) {
-                    waterPerTile = (cellScript.waterLevel - cellScript.capacity) / neighbours.Count;
-                    foreach (Vector2 n in neighbours) {
-                        GetCellScript((int)n.x, (int)n.y).waterGainedThisCycle += waterPerTile;
-                        cellScript.waterLevel -= waterPerTile;
+                    if (cellScript.waterLevel > cellScript.capacity) {
+                        waterPerTile = (cellScript.waterLevel - cellScript.capacity) / neighbours.Count;
+                        foreach (Vector2 n in neighbours) {
+                            GetCellScript((int)n.x, (int)n.y).waterGainedThisCycle += waterPerTile;
+                            cellScript.waterLevel -= waterPerTile;
+                        }
                     }
                 }
+
+                ApplyWaterLevelChanges();
             }
 
-            ApplyWaterLevelChanges();
+            
 
 
             GetCellScript((int)outletLocation.x, (int)outletLocation.y).waterLevel = 0f;
 
-            float damageThreshold = 3f; // THRESHOLD to determine whether a residential area takes damage
+            float damageThreshold = 1f; // THRESHOLD to determine whether a residential area takes damage
 
             foreach (Vector2 position in ResidentialCells) {
                 Cell c = GetCellScript((int)position.x, (int)position.y);
