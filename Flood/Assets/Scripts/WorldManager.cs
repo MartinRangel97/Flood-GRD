@@ -45,8 +45,8 @@ public class WorldManager : MonoBehaviour
     }
 
     private void Start() {
-        width = 51;
-        height = 81;
+        width = 31;
+        height = 31;
         cells = new GameObject[width, height];
         InitialiseWorld();
         //SetLevel(1);
