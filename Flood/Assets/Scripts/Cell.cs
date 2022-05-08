@@ -151,7 +151,7 @@ public class Cell : MonoBehaviour {
 
         
         float minWater = 0;
-        float maxWater = 15;    //HARDCODED VALUE
+        float maxWater = 8;    //HARDCODED VALUE
         float green = 0;
         float blue = 0;
 

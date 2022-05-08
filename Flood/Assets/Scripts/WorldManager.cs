@@ -363,7 +363,7 @@ public class WorldManager : MonoBehaviour
 
             cScript.ChangeWaterLevel(cScript.waterGainedThisCycle);
             cScript.waterGainedThisCycle = 0;
-            if (cScript.waterLevel < 0.005f) {      // THRESHOLD VALUE for Flood Visual
+            if (cScript.waterLevel < 0.01f) {      // THRESHOLD VALUE for Flood Visual
                 cScript.waterLevel = 0;
                 cScript.ChangeElevation(cScript.elevation);
             } 
