@@ -49,10 +49,8 @@ public class WorldManager : MonoBehaviour
         height = 31;
         cells = new GameObject[width, height];
         InitialiseWorld();
-        //SetLevel(1);
         Debug.Log(level);
-        //StartCoroutine("DelayLoadWorld");
-        //DrawRandomLake((15, 3));
+        StartCoroutine("DelayLoadWorld");
     }
 
     private IEnumerator DelayLoadWorld() //botch fix
